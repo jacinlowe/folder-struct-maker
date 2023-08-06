@@ -1,23 +1,36 @@
 import json
 
 
-class VariableService:
+class AttributeService:
     def __init__(self):
         self.variables = []
 
-    def add_variable(self, key, value):
+    def add_attribute(self, key, value):
         self.variables.append({"key": key, "value": value})
 
-    def get_variables(self) -> list[dict[str]]:
+    def get_attributes(self) -> list[dict[str]]:
         return self.variables
 
-    def clear_variables(self):
+    def clear_attributes(self):
         self.variables = []
 
-    def update_variable(self, index, key, value):
+    def update_attribute(self, index, key, value):
         if 0 <= index < len(self.variables):
             self.variables[index]["key"] = key
             self.variables[index]["value"] = value
+
+    def save_attributes(self):
+        data_saver = DataService(r"src\Services\attributes.json")
+        data_saver.save_data(self.variables)
+
+    def load(self):
+        attribute_file = r"src\Services\attributes.json"
+        data_load = DataService(attribute_file)
+        self.variables = [
+            {"key": key, "value": value}
+            for key, value in dict(data_load.load_data()).items()
+        ]
+        print(f"attribute data: {self.variables} loaded from: {attribute_file}")
 
 
 class DataService:
@@ -37,6 +50,7 @@ class DataService:
 
 
 if __name__ == "__main__":
-    data_service = DataService("data.json")
-
+    data_service = AttributeService()
+    data_service.load()
+    # print(data_service.load())
     # to Save data

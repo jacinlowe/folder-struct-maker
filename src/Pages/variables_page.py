@@ -29,7 +29,11 @@ from PySide6.QtWidgets import (
     QCheckBox,
 )
 
+from Services.dataservice import AttributeService
+
 SEPERATOR = "_"
+
+attribute_service = AttributeService()
 
 
 class AlternatingColorDelegate(QStyledItemDelegate):
@@ -45,13 +49,20 @@ class AlternatingColorDelegate(QStyledItemDelegate):
 class VariablesPage(QWidget):
     def __init__(self):
         super().__init__()
+
         layout = QVBoxLayout()
-        self.attribute_editor = Attributes()
+        self.attribute_editor = Attributes(attribute_service)
         layout.addWidget(self.attribute_editor, 1)
+        result_text_label = QLabel("Folder Name:")
+
         self.result_text = QTextEdit()
         self.result_text.setReadOnly(True)
         self.result_text.setFixedHeight(self.result_text.fontMetrics().height())
-        layout.addWidget(self.result_text)
+        result_layout = QHBoxLayout()
+        result_layout.addWidget(result_text_label)
+        result_layout.addWidget(self.result_text)
+
+        layout.addLayout(result_layout)
 
         self.setLayout(layout)
         self.attribute_editor.layout.setStretch(0, 1)
@@ -73,13 +84,15 @@ class VariablesPage(QWidget):
 
     def get_result_text_values(self):
         values = self.attribute_editor.get_values()
-        concatenated_values = f"{SEPERATOR}".join(f"{value}" for key, value in values)
+        concatenated_values = f"{SEPERATOR}".join(
+            f"{value}" if value != "" else "" for key, value in values
+        )
         return concatenated_values
 
     def get_result_text_keys(self):
         values = self.attribute_editor.get_values()
         concatenated_values = f"{SEPERATOR}".join(
-            "{" + f"{key}" + "}" for key, value in values
+            "{" + f"{key}" + "}" if key != "" else "" for key, value in values
         )
         return concatenated_values
 
@@ -113,8 +126,9 @@ class Attributes(QWidget):
     row_added = Signal()
     cell_changed = Signal()
 
-    def __init__(self):
+    def __init__(self, attribute_service):
         super().__init__()
+        self.attribute_service = attribute_service
 
         self.tableWidget = QTableWidget()
         self.tableWidget.setColumnCount(2)
@@ -134,6 +148,7 @@ class Attributes(QWidget):
         self.layout.addWidget(button)
         self.layout.addWidget(self.tableWidget)
         self.setLayout(self.layout)
+        self.load_attributes()  # Load saved attributes on startup
         if self.tableWidget.rowCount() < 1:
             self.add_row()
 
@@ -148,12 +163,41 @@ class Attributes(QWidget):
 
         # Connect the itemChanged signal of the table widget to start the debounce timer
         self.tableWidget.itemChanged.connect(self.start_debounce_timer)
+        self.tableWidget.cellChanged.connect(self.format_cell)
+
+    def format_cell(self):
+        for row in range(self.tableWidget.rowCount()):
+            key_item = self.tableWidget.item(row, 0)
+            key_item.setText("_".join(key_item.text().upper().split(" ")))
+
+    def load_attributes(self):
+        self.attribute_service.load()
+        attributes = self.attribute_service.get_attributes()
+        # self.clear_table()
+        for attribute in attributes:
+            self.add_row(attribute["key"], attribute["value"])
+
+    def clear_table(self):
+        raise NotImplementedError
+
+    def save_attributes(self):
+        attributes = []
+        for row in range(self.tableWidget.rowCount()):
+            key_item = self.tableWidget.item(row, 0)
+            value_item = self.tableWidget.item(row, 1)
+            key = key_item.text() if key_item else ""
+            value = value_item.text() if value_item else ""
+            attributes.append({"key": key, "value": value})
+        self.attribute_service.clear_attributes()
+        self.attribute_service.variables = attributes
+        self.attribute_service.save_attributes()
 
     def add_row(self, key="", value=""):
+
         row_position = self.tableWidget.rowCount()
         self.tableWidget.insertRow(row_position)
 
-        key_item = QTableWidgetItem(key)
+        key_item = QTableWidgetItem(key.upper())
         value_item = QTableWidgetItem(value)
 
         self.tableWidget.setItem(row_position, 0, key_item)
@@ -176,4 +220,5 @@ class Attributes(QWidget):
 
     def emit_cell_changed(self):
         # Emit the cell_changed signal when debounce timer times out
+
         self.cell_changed.emit()
