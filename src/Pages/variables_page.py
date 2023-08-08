@@ -7,9 +7,11 @@ from PySide6.QtGui import (
     QAction,
     QColor,
     QPalette,
+    QFontMetrics,
 )
 from PySide6.QtWidgets import (
     QApplication,
+    QSizePolicy,
     QMainWindow,
     QTreeView,
     QVBoxLayout,
@@ -27,7 +29,9 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QItemDelegate,
     QCheckBox,
+    QComboBox,
 )
+
 
 from Services.dataservice import AttributeService
 
@@ -51,7 +55,27 @@ class VariablesPage(QWidget):
         super().__init__()
 
         layout = QVBoxLayout()
+
+        # Template Selection
+        template_h_layout = QHBoxLayout()
+        template_label = QLabel("Template: ")
+        font_metrics = QFontMetrics(template_label.font())
+        label_width = font_metrics.maxWidth() + 38
+        template_label.setFixedWidth(label_width)
+
+        self.template_selection = QComboBox()
+        self.template_selection.addItems(
+            ["Preset 1", "Preset 2", "Preset 3", "Preset 4"]
+        )  # TODO: GET THIS FROM THE STRUCTURE PAGE
+        self.template_selection.currentIndexChanged.connect(self.load_preset)
+
+        template_h_layout.addWidget(template_label)
+        template_h_layout.addWidget(self.template_selection)
+        layout.addLayout(template_h_layout)
+
+        # Attribute Field
         self.attribute_editor = Attributes(attribute_service)
+
         layout.addWidget(self.attribute_editor, 1)
         result_text_label = QLabel("Folder Name:")
 
@@ -74,6 +98,9 @@ class VariablesPage(QWidget):
 
         self.attribute_editor.row_added.connect(self.update_result_text)
         self.attribute_editor.cell_changed.connect(self.update_result_text)
+
+    def load_preset(self, index) -> None:
+        print("loading preset", index)
 
     def update_result_text(self):
         if self.toggle_button.isChecked():
@@ -125,6 +152,7 @@ class KeyDelegate(QItemDelegate):
 class Attributes(QWidget):
     row_added = Signal()
     cell_changed = Signal()
+    create_project = Signal(name="createProject")
 
     def __init__(self, attribute_service):
         super().__init__()
@@ -143,9 +171,18 @@ class Attributes(QWidget):
         self.tableWidget.setItemDelegateForColumn(0, key_delegate)
 
         self.layout = QVBoxLayout()
+        button_layout = QHBoxLayout()
+
+        # Creation Buttons
         button = QPushButton("Add New Attribute")
         button.clicked.connect(self.add_row)
-        self.layout.addWidget(button)
+        create_project_btn = QPushButton("Create Project")
+        create_project_btn.clicked.connect(self.create_project_fn)
+        button_layout.addWidget(button)
+        button_layout.addWidget(create_project_btn)
+        self.layout.addLayout(button_layout)
+
+        # self.layout.addWidget(button)
         self.layout.addWidget(self.tableWidget)
         self.setLayout(self.layout)
         self.load_attributes()  # Load saved attributes on startup
@@ -193,7 +230,6 @@ class Attributes(QWidget):
         self.attribute_service.save_attributes()
 
     def add_row(self, key="", value=""):
-
         row_position = self.tableWidget.rowCount()
         self.tableWidget.insertRow(row_position)
 
@@ -217,6 +253,10 @@ class Attributes(QWidget):
 
     def start_debounce_timer(self):
         self.debounce_timer.start()
+
+    def create_project_fn(self):
+        print("creating project")
+        self.create_project.emit()
 
     def emit_cell_changed(self):
         # Emit the cell_changed signal when debounce timer times out

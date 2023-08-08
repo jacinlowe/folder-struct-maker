@@ -27,10 +27,38 @@ class AttributeService:
         attribute_file = r"src\Services\attributes.json"
         data_load = DataService(attribute_file)
         self.variables = [
-            {"key": key, "value": value}
+            {"key": key, "value": str(value)}
             for key, value in dict(data_load.load_data()).items()
         ]
         print(f"attribute data: {self.variables} loaded from: {attribute_file}")
+
+
+class PresetService:
+    file_path = r"src\Services\presets.json"
+
+    def __init__(self) -> None:
+        self.presets: dict = {}
+
+    def add_preset(self, key, value):
+        self.presets[key] = value
+
+    def get_presets(self) -> dict[str]:
+        return self.presets
+
+    def clear_presets(self):
+        self.presets = {}
+
+    def update_preset(self, key: str, value: any):
+        self.presets[key] = value
+
+    def save_preset(self):
+        data_saver = DataService(self.file_path)
+        data_saver.save_data(self.presets)
+
+    def load(self):
+        data_load = DataService(self.file_path)
+        self.presets = dict(data_load.load_data())
+        print(f"preset data {self.presets} loaded from: {self.file_path}")
 
 
 class DataService:
