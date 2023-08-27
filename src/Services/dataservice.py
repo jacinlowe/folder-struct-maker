@@ -1,9 +1,46 @@
+from __future__ import annotations
 import json
+from typing import Any, Union
+from pydantic import BaseModel
+from pydantic.dataclasses import dataclass
+from uuid import uuid1
+
+
+def create_preset_id() -> str:
+    return str(uuid1())
+
+
+@dataclass
+class File:
+    file_name: str
+    extension: str
+    data: Union[Any, None] = None
+
+
+class Folder(BaseModel):
+    folder_name: str
+    children: list[Union[Folder, File]] = None
+
+
+@dataclass
+class Preset:
+    id: str
+    preset_name: str
+    structure: list[Union[File, Folder]] = None
+
+
+class PresetData(BaseModel):
+    presets: list[Preset]
 
 
 class AttributeService:
     def __init__(self):
         self.variables = []
+        self.attribute_file = r"src\Services\attributes.json"
+
+    def __del__(self):
+        print(f"destroying object: {type(self)}")
+        self.save_attributes()
 
     def add_attribute(self, key, value):
         self.variables.append({"key": key, "value": value})
@@ -20,50 +57,58 @@ class AttributeService:
             self.variables[index]["value"] = value
 
     def save_attributes(self):
-        data_saver = DataService(r"src\Services\attributes.json")
+        data_saver = DataService(self.attribute_file)
         data_saver.save_data(self.variables)
 
     def load(self):
-        attribute_file = r"src\Services\attributes.json"
-        data_load = DataService(attribute_file)
+        data_load = DataService(self.attribute_file)
         self.variables = [
             {"key": key, "value": str(value)}
             for key, value in dict(data_load.load_data()).items()
         ]
-        print(f"attribute data: {self.variables} loaded from: {attribute_file}")
+        print(f"attribute data: {self.variables} loaded from: {self.attribute_file}")
 
 
 class PresetService:
     file_path = r"src\Services\presets.json"
 
     def __init__(self) -> None:
-        self.presets: dict = {}
+        self._presets: PresetData = PresetData(presets=[])
+        self.load()
 
-    def add_preset(self, key, value):
-        self.presets[key] = value
+    def __del__(self):
+        print(f"deleting service: {type(self)}")
 
-    def get_presets(self) -> dict[str]:
-        return self.presets
+    def add_preset(self, preset: Preset):
+        self._presets.presets.append(preset)
+
+    def get_presets(self) -> list[Preset]:
+        return self._presets.presets
 
     def clear_presets(self):
-        self.presets = {}
+        self._presets = PresetData(presets=[])
 
-    def update_preset(self, key: str, value: any):
-        self.presets[key] = value
+    def update_preset(self, preset_update: Preset):
+        for index, preset in enumerate(self._presets.presets):
+            if preset.id == preset_update.id:
+                self._presets.presets.pop(index)
+                self._presets.presets.insert(index, preset_update)
 
     def save_preset(self):
         data_saver = DataService(self.file_path)
-        data_saver.save_data(self.presets)
+        data_saver.save_data(self._presets.model_dump())
 
     def load(self):
         data_load = DataService(self.file_path)
-        self.presets = dict(data_load.load_data())
-        print(f"preset data {self.presets} loaded from: {self.file_path}")
+        data = data_load.load_data()
+        if data:
+            self._presets = PresetData.model_validate(data)
+            print(f"preset data {self._presets} loaded from: {self.file_path}")
 
 
 class DataService:
-    def __init__(self, file_path):
-        self.file_path = file_path
+    def __init__(self, file_path: str):
+        self.file_path: str = file_path
 
     def save_data(self, data):
         with open(self.file_path, "w") as file:
@@ -73,12 +118,50 @@ class DataService:
         try:
             with open(self.file_path, "r") as file:
                 return json.load(file)
-        except FileNotFoundError:
-            return []
+        except FileNotFoundError as e:
+            print(e)
+            return None
+
+
+def save_presets(presets: list[Preset]):
+    dataservice = DataService("./src/Services/presets.json")
+    data = PresetData(presets=presets)
+    dataservice.save_data(data.model_dump())
+
+
+def load_presets() -> PresetData:
+    dataservice = DataService("./src/Services/presets.json")
+    data = dataservice.load_data()
+    return PresetData.model_validate(data)
 
 
 if __name__ == "__main__":
-    data_service = AttributeService()
-    data_service.load()
-    # print(data_service.load())
-    # to Save data
+    preset = Preset(
+        preset_name="test",
+        id=create_preset_id(),
+        structure=[
+            Folder(
+                folder_name="test folder",
+                children=[File(file_name="test file 2", extension=".txt")],
+            ),
+            File(file_name="test file", extension=".txt"),
+        ],
+    )
+    preset2 = Preset(
+        preset_name="test2",
+        id=create_preset_id(),
+        structure=[
+            Folder(
+                folder_name="test folder",
+                children=[File(file_name="test file 2", extension=".txt")],
+            ),
+            File(file_name="test file", extension=".txt"),
+        ],
+    )
+    preset_service = PresetService()
+    preset_service.add_preset(preset)
+    preset_service.add_preset(preset2)
+    preset2.preset_name = "THis is an update"
+    preset_service.update_preset(preset2)
+    preset_service.save_preset()
+    # print(str(get_unique_id()))

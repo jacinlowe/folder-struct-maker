@@ -1,0 +1,42 @@
+{
+    "test": {
+        "preset_name": "test",
+        "structure": [
+            {
+                "folder_name": "test folder",
+                "children": [
+                    {
+                        "file_name": "test file 2",
+                        "extension": ".txt",
+                        "data": null
+                    }
+                ]
+            },
+            {
+                "file_name": "test file",
+                "extension": ".txt",
+                "data": null
+            }
+        ]
+    },
+    "test2": {
+        "preset_name": "test2",
+        "structure": [
+            {
+                "folder_name": "test folder",
+                "children": [
+                    {
+                        "file_name": "test file 2",
+                        "extension": ".txt",
+                        "data": null
+                    }
+                ]
+            },
+            {
+                "file_name": "test file",
+                "extension": ".txt",
+                "data": null
+            }
+        ]
+    }
+}
