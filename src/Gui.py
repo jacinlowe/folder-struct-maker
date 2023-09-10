@@ -20,6 +20,7 @@ from reloading import reloading
 # PAGES
 from Pages.variables_page import VariablesPage
 from Pages.presets_page import PresetFolderStructPage
+from Services.dataservice import PresetService
 from Services.event_bus import EventBus
 from Services.logger import Logger
 
@@ -36,13 +37,14 @@ Grey = "#ABAEB4"
 
 logger = Logger()
 event_bus = EventBus()
+preset_service = PresetService()
 
 
 class PageThree(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout()
-        layout.addWidget(QPushButton("Button on Page One"))
+        layout.addWidget(QPushButton("Button on Page One s"))
         self.setLayout(layout)
 
 

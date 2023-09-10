@@ -1,0 +1,56 @@
+{
+    "presets": [
+        {
+            "id": "c48d39f0-4c9d-11ee-8a00-6c5ab0817136",
+            "preset_name": "union",
+            "structure": null
+        },
+        {
+            "id": "dd2ec37e-4c9d-11ee-9d9c-6c5ab0817136",
+            "preset_name": "union2",
+            "structure": null
+        },
+        {
+            "id": "983c4d1b-4c9f-11ee-9bda-6c5ab0817136",
+            "preset_name": "test",
+            "structure": [
+                {
+                    "folder_name": "test folder",
+                    "children": [
+                        {
+                            "file_name": "test file 2",
+                            "extension": ".txt",
+                            "data": null
+                        }
+                    ]
+                },
+                {
+                    "file_name": "test file",
+                    "extension": ".txt",
+                    "data": null
+                }
+            ]
+        },
+        {
+            "id": "983c9b3b-4c9f-11ee-b1ac-6c5ab0817136",
+            "preset_name": "THis is an update",
+            "structure": [
+                {
+                    "folder_name": "test folder",
+                    "children": [
+                        {
+                            "file_name": "test file 2",
+                            "extension": ".txt",
+                            "data": null
+                        }
+                    ]
+                },
+                {
+                    "file_name": "test file",
+                    "extension": ".txt",
+                    "data": null
+                }
+            ]
+        }
+    ]
+}

@@ -1,4 +1,5 @@
-from typing import Any, Callable, List, Optional, Union
+from dataclasses import dataclass
+from typing import Any, Callable, List, Optional, Protocol, Union
 import flet as ft
 
 from flet import (
@@ -42,7 +43,11 @@ from flet_core.types import (
     RotateValue,
     ScaleValue,
 )
+
 from components.tree_components import Folder, File
+from dataservice import PresetService, create_blank_preset
+from dataservice import File as DataFile, Folder as DataFolder
+
 
 button_style = ButtonStyle(
     color={MaterialState.PRESSED: colors.BLUE},
@@ -56,6 +61,33 @@ selected_button_style = ButtonStyle(
     bgcolor={MaterialState.DEFAULT: colors.RED_300},
 )
 color_snuff = "#dbdaea"
+
+
+@dataclass
+class Preset:
+    id: str
+    preset_name: str
+    structure: list[Union[File, Folder]] = None
+
+
+def generate_preset_structure(
+    structure: list[DataFile | DataFolder], results: list = None
+) -> list[File | Folder]:
+    results = [] if results == None else results
+    for i in structure:
+        if isinstance(i, DataFile):
+            results.append(File(i.get_file_name, i.data))
+        else:
+            if i.children == None:
+                results.append(Folder(i.folder_name))
+            else:
+                results.append(
+                    Folder(
+                        i.folder_name, children=generate_preset_structure(i.children)
+                    )
+                )
+    print(results)
+    return results
 
 
 class SelectableButton(TextButton):
@@ -90,10 +122,11 @@ class SelectableButton(TextButton):
 class PresetSelections(UserControl):
     selected_preset = None
 
-    def __init__(self, page: Page):
+    def __init__(self, page: Page, preset_service: PresetService):
         super().__init__()
         self.page = page
-        self.list_view: ListView[TextButton] = ListView(
+        self.preset_service = preset_service
+        self.list_view: ListView[SelectableButton] = ListView(
             expand=1, spacing=5, padding=10, auto_scroll=True
         )
         self.container = Column(
@@ -123,6 +156,17 @@ class PresetSelections(UserControl):
             ],
         )
 
+        self.list_view.controls = [
+            SelectableButton(
+                text=preset.preset_name,
+                style=button_style,
+                data=preset,
+                selected=False,
+                on_click=self.select_preset,
+            )
+            for preset in self.preset_service.get_presets()
+        ]
+
     def select_preset(self, e: ControlEvent):
         event_button = e.control
         self.reset_selected()
@@ -130,6 +174,7 @@ class PresetSelections(UserControl):
             if event_button.data == btn.data:
                 btn.is_selected = not btn.is_selected
                 self.selected_preset = event_button.data
+        self.page.pubsub.send_all_on_topic("selected_preset", event_button.data.id)
         self.update()
 
     def reset_selected(self):
@@ -140,15 +185,18 @@ class PresetSelections(UserControl):
 
     def handle_add_preset(self, name: str):
         index = len(self.list_view.controls)
+        preset = create_blank_preset(name)
         self.reset_selected()
         btn = SelectableButton(
-            text=name if name is not None else f"Preset {index+1}",
+            text=name,
             style=button_style,
-            data=str(index),
+            data=preset.id,
             selected=True,
             on_click=self.select_preset,
         )
+        self.preset_service.add_preset(preset)
         self.list_view.controls.append(btn)
+        self.page.pubsub.send_all_on_topic("selected_preset", preset.id)
         self.update()
         btn.update()
 
@@ -171,23 +219,20 @@ class PresetSelections(UserControl):
         self.update()
 
     def build(self):
-        self.list_view.controls = [
-            SelectableButton(
-                text=f"Preset {i+1}",
-                style=button_style,
-                data=str(i),
-                selected=True if i == 1 else False,
-                on_click=self.select_preset,
-            )
-            for i in range(0, 5)
-        ]
         return self.container
 
 
 class PresetTreeView(UserControl):
-    def __init__(self, page: Page):
+    def __init__(self, page: Page, preset_service: PresetService):
         super().__init__()
         self.page = page
+        self.preset_service = preset_service
+        self.page.pubsub.subscribe_topic(
+            "selected_preset", self.change_preset_structure
+        )
+
+    def load_data(self):
+        self
 
     def build(self):
         self.list_view = ListView(
@@ -203,11 +248,11 @@ class PresetTreeView(UserControl):
         self.list_view.controls += [
             File(f"test asdfsefsefsefeaefaefeafef{i+1}", "") for i in range(0, 5)
         ]
-        # self.list_view.controls += [
-        #     Folder("idk", self.handle_drag, children=[File("test who", "")])
-        # ]
+        self.list_view.controls += [
+            Folder("idk", self.handle_drag, children=[File("test who", "")])
+        ]
 
-        col = Column(
+        treeview = Column(
             alignment=MainAxisAlignment.CENTER,
             expand=True,
             controls=[
@@ -246,7 +291,7 @@ class PresetTreeView(UserControl):
             ],
             horizontal_alignment=CrossAxisAlignment.CENTER,
         )
-        return col
+        return treeview
 
     def add_file(self, e):
         self.list_view.controls.append(File(f"test add file", ""))
@@ -281,30 +326,43 @@ class PresetTreeView(UserControl):
 
         # self.update()
 
+    def change_preset_structure(self, topic: str, id: str):
+        print(topic, id)
+        presets = self.preset_service.get_presets()
+        for preset in presets:
+            if preset.id == id:
+                # print(preset)
+                if preset.structure == None:
+                    self.list_view.controls.clear()
+                    self.update()
+                    return
+                self.list_view.controls = generate_preset_structure(preset.structure)
+                self.update()
+
 
 class StructuresPage(Column):
     def __init__(self, page: Page):
         super().__init__()
         self.page = page
-        self.page.on_resize = self.resize_page_items
-
-        self.presets = PresetSelections(self.page)
-        self.tree_view = PresetTreeView(self.page)
+        self.page.pubsub.subscribe_topic("selected_preset", self.change_current_preset)
+        self.preset_service = PresetService()
+        self.presets = PresetSelections(self.page, self.preset_service)
+        self.tree_view = PresetTreeView(self.page, self.preset_service)
         self.left_container = Container(
             alignment=alignment.center,
             border_radius=5,
             border=ft.border.all(1, colors.BLACK12),
             padding=5,
             bgcolor=color_snuff,
-            shadow=[
-                BoxShadow(
-                    spread_radius=5.0,
-                    blur_radius=5.0,
-                    color=colors.BLUE_GREY_300,
-                    offset=ft.Offset(1, 5),
-                    blur_style=ft.ShadowBlurStyle.NORMAL,
-                )
-            ],
+            # shadow=[
+            #     BoxShadow(
+            #         spread_radius=5.0,
+            #         blur_radius=5.0,
+            #         color=colors.BLUE_GREY_300,
+            #         offset=ft.Offset(1, 5),
+            #         blur_style=ft.ShadowBlurStyle.NORMAL,
+            #     )
+            # ],
             margin=margin.Margin(10, 5, 2, 5),
             content=self.presets,
         )
@@ -314,15 +372,15 @@ class StructuresPage(Column):
             border_radius=5,
             padding=5,
             bgcolor=color_snuff,
-            shadow=[
-                BoxShadow(
-                    spread_radius=5.0,
-                    blur_radius=5.0,
-                    color=colors.BLUE_GREY_300,
-                    offset=ft.Offset(0, 5),
-                    blur_style=ft.ShadowBlurStyle.NORMAL,
-                )
-            ],
+            # shadow=[
+            #     BoxShadow(
+            #         spread_radius=5.0,
+            #         blur_radius=5.0,
+            #         color=colors.BLUE_GREY_300,
+            #         offset=ft.Offset(0, 5),
+            #         blur_style=ft.ShadowBlurStyle.NORMAL,
+            #     )
+            # ],
             margin=margin.Margin(2, 5, 10, 5),
             content=self.tree_view,
         )
@@ -344,20 +402,25 @@ class StructuresPage(Column):
                 ],
             ),
         )
+        self.page.on_resize = self.resize_page_items
 
     def resize_page_items(self, e: ControlEvent):
         self.window_width, self.window_height = [float(x) for x in e.data.split(",")]
         print(f"Width: {self.window_width}, Height: {self.window_height}")
         self.left_container.height = self.window_height * 0.9 - 150
         self.right_container.height = self.window_height * 0.9 - 150
-        self.update()
+        # self.update()
         self.page.update()
+
+    def change_current_preset(self, topic, id: str):
+        print(f"changing current preset to: {id}, from: {topic} ")
 
     def build(self):
         self.update()
         print(self.page.width, self.page.height)
         print(f"({self.width},{self.height})")
 
+        # return Container(bgcolor=colors.RED_100, width=100, height=100)
         return self
         # self.update()
         # self.page.update()

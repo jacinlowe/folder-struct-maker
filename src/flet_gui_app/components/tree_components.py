@@ -91,6 +91,7 @@ class Folder(UserControl):
                 on_accept=self.drag_accept,
             ),
         )
+
         self.drag_handler_callback = handle_drag
         if children:
             self.open_folder()
