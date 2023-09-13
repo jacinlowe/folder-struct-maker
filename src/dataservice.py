@@ -11,8 +11,8 @@ def create_preset_id() -> str:
     return str(uuid1())
 
 
-PRESET_FILE_PATH = Path(__file__).parent / r"presets.json"
-ATTRIBUTE_FILE_PATH = Path(__file__).parent / r"attributes.json"
+PRESET_FILE_PATH = Path(__file__).parent / "data_store" / r"presets.json"
+ATTRIBUTE_FILE_PATH = Path(__file__).parent / "data_store" / r"attributes.json"
 
 
 @dataclass
@@ -130,9 +130,11 @@ class PresetService:
 
 class DataService:
     def __init__(self, file_path: str):
-        self.file_path: str = file_path
+        self.file_path: str | Path = file_path
 
     def save_data(self, data):
+        if isinstance(self.file_path, Path):
+            self.file_path.parent.mkdir(exist_ok=True, parents=True)
         with open(self.file_path, "w") as file:
             json.dump(data, file, indent=4)
 
@@ -143,6 +145,9 @@ class DataService:
                 return json.load(file)
         except FileNotFoundError as e:
             print(e)
+            return None
+        except PermissionError as e:
+            print(f"Permission Error: {e}")
             return None
 
 

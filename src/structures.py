@@ -174,7 +174,8 @@ class PresetSelections(UserControl):
             if event_button.data == btn.data:
                 btn.is_selected = not btn.is_selected
                 self.selected_preset = event_button.data
-        self.page.pubsub.send_all_on_topic("selected_preset", event_button.data.id)
+
+        self.page.pubsub.send_all_on_topic("selected_preset", event_button.data)
         self.update()
 
     def reset_selected(self):
