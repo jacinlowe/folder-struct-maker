@@ -28,6 +28,9 @@ from flet import (
     DragTargetAcceptEvent,
     AlertDialog,
     TextField,
+    FilePicker,
+    FilePickerResultEvent,
+    FilePickerFileType,
 )
 
 import time, threading
@@ -296,6 +299,51 @@ class PresetTreeView(UserControl):
 
     def add_file(self, e):
         self.list_view.controls.append(File(f"test add file", ""))
+
+        def close_dlg(event):
+            dlg_modal.open = False
+            e.page.update()
+
+        def on_file_picker_result(event: FilePickerResultEvent):
+            print("Selected Files: ", event.files)
+            print("Selected file or directory: ", event.path)
+
+        def choose_custom_file(event):
+            close_dlg(e)
+            file_picker = FilePicker(on_result=on_file_picker_result)
+            e.page.overlay.append(file_picker)
+            e.page.update()
+            file_picker.pick_files("Select custom File", allow_multiple=False)
+
+        # TODO: ADD file picker here
+
+        dlg_modal = AlertDialog(
+            modal=True,
+            title=Text("Create File"),
+            content=Text("Select a blank file or a custom file! "),
+            actions=[
+                ElevatedButton(
+                    "Blank File",
+                    col=3,
+                    style=rounded_button_style,
+                    # width=10,
+                    on_click=close_dlg,
+                ),
+                ElevatedButton(
+                    "Custom File",
+                    col=3,
+                    style=rounded_button_style,
+                    # width=10,
+                    on_click=choose_custom_file,
+                ),
+            ],
+            actions_alignment=MainAxisAlignment.CENTER,
+            on_dismiss=lambda e: print("Select File Modal dismissed!"),
+        )
+        e.page.dialog = dlg_modal
+        dlg_modal.open = True
+        e.page.update()
+
         self.update()
 
     def add_folder(self, e):

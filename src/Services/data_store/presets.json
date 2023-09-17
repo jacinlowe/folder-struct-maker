@@ -1,0 +1,94 @@
+{
+  "presets": [
+    {
+      "id": "1b2bc9ad-4530-11ee-9c3e-6c5ab0817136",
+      "preset_name": "test",
+      "structure": [
+        {
+          "folder_name": "test folder",
+          "children": [
+            {
+              "file_name": "test file 2",
+              "extension": ".txt",
+              "data": null
+            }
+          ]
+        },
+        {
+          "file_name": "test file",
+          "extension": ".txt",
+          "data": "hello world to the testtttsefoahdfiohafoihaefo iajef oiaehf aoiehf aieuhf auehhh iah fioahe f"
+        },
+        {
+          "file_name": "test after effect file",
+          "extension": ".aep",
+          "data": null,
+          "file_ref": "D:/CODE_PLAYGROUND/folder-struct-maker/dummy data/dummy project.aep"
+        }
+      ]
+    },
+    {
+      "id": "1b2bf0c3-4530-11ee-85cc-6c5ab0817136",
+      "preset_name": "THis is an update",
+      "structure": [
+        {
+          "folder_name": "test folder",
+          "children": [
+            {
+              "file_name": "test file 2",
+              "extension": ".txt",
+              "data": null
+            }
+          ]
+        },
+        {
+          "file_name": "test file",
+          "extension": ".txt",
+          "data": null
+        }
+      ]
+    },
+    {
+      "id": "e970372c-4530-11ee-b185-6c5ab0817136",
+      "preset_name": "test",
+      "structure": [
+        {
+          "folder_name": "test folder",
+          "children": [
+            {
+              "file_name": "test file 2",
+              "extension": ".txt",
+              "data": null
+            }
+          ]
+        },
+        {
+          "file_name": "test file",
+          "extension": ".txt",
+          "data": null
+        }
+      ]
+    },
+    {
+      "id": "e970854a-4530-11ee-bd2a-6c5ab0817136",
+      "preset_name": "THis is an update",
+      "structure": [
+        {
+          "folder_name": "test folder",
+          "children": [
+            {
+              "file_name": "test file 2",
+              "extension": ".txt",
+              "data": null
+            }
+          ]
+        },
+        {
+          "file_name": "test file",
+          "extension": ".txt",
+          "data": null
+        }
+      ]
+    }
+  ]
+}

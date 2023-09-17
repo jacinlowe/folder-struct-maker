@@ -1,0 +1,24 @@
+{
+    "attributes": [
+        {
+            "key": "test",
+            "value": "blue"
+        },
+        {
+            "key": "project_name",
+            "value": "Happy go lucky"
+        },
+        {
+            "key": "Client",
+            "value": "Mosaic Group"
+        },
+        {
+            "key": "User",
+            "value": "AL_2"
+        },
+        {
+            "key": "User2",
+            "value": "AL_adfsweff"
+        }
+    ]
+}

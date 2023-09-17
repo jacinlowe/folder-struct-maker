@@ -1,3 +1,4 @@
 *.pyc
 flet_tutorials
 flet_tutorials/*
+dummy data/*

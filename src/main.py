@@ -50,12 +50,12 @@ from structures import StructuresPage
 from variables import VariablesPage
 from actions import ActionsPage
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def get_page_dimensions(page: Page):
     dimensions = (page.width, page.height)
-    print(dimensions)
+    logging.log(3, dimensions)
     return dimensions
 
 
@@ -291,6 +291,7 @@ def run_flet_app(preset_service=None, variable_service=None):
                             animation_duration=300,
                             label_color=colors.WHITE70,
                             unselected_label_color=colors.WHITE60,
+                            indicator_tab_size=True,
                             tabs=[
                                 Tab(text="Variables", content=variables_page),
                                 Tab(text="Structures", content=structures_page),

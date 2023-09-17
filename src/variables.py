@@ -28,15 +28,18 @@ from flet import (
     Stack,
     ScrollMode,
 )
+from Services.dataservice import AttributeService, PresetService, Attribute
 from utils import debounce
 
 
 class VariablesEditor(UserControl):
     cell_changed_fn: Callable = None
 
-    def __init__(self, page: Page):
+    def __init__(self, page: Page, attribute_service: AttributeService):
         super().__init__()
         self.page = page
+        self.attribute_service = attribute_service
+        self.attributes = self.attribute_service.get_attributes()
         self.sorted_data: tuple[int, bool] = (0, False)
         self.table = DataTable(
             width=900,
@@ -64,49 +67,8 @@ class VariablesEditor(UserControl):
                     on_sort=self.switch_sort_column_selected,
                 ),
             ],
-            rows=[
-                DataRow(
-                    on_select_changed=self.row_selected,
-                    on_long_press=self.delete_row_confirm,
-                    cells=[
-                        DataCell(
-                            content=TextField(
-                                border="none",
-                                expand=True,
-                                on_change=self.updated_values,
-                            ),
-                        ),
-                        DataCell(
-                            content=TextField(
-                                border="none",
-                                expand=True,
-                                on_change=self.updated_values,
-                            )
-                        ),
-                    ],
-                ),
-                DataRow(
-                    on_select_changed=self.row_selected,
-                    on_long_press=self.delete_row_confirm,
-                    cells=[
-                        DataCell(
-                            TextField(
-                                border="none",
-                                expand=True,
-                                on_change=self.updated_values,
-                            )
-                        ),
-                        DataCell(
-                            TextField(
-                                border="none",
-                                expand=True,
-                                on_change=self.updated_values,
-                            )
-                        ),
-                    ],
-                ),
-            ],
         )
+        self.populate_table()
 
     def switch_sort_column_selected(self, e: ControlEvent):
         index = e.column_index
@@ -200,6 +162,84 @@ class VariablesEditor(UserControl):
             self.cell_changed_fn()
         # print("change has occured")
 
+    def populate_table(self) -> None:
+        if self.attributes is None:
+            self.create_empty_table()
+        else:
+            print(self.attributes)
+            for attrib_row in self.attributes:
+                self.table.rows.append(
+                    DataRow(
+                        on_select_changed=self.row_selected,
+                        on_long_press=self.delete_row_confirm,
+                        cells=[
+                            DataCell(
+                                TextField(
+                                    value=attrib_row.key,
+                                    border="none",
+                                    expand=True,
+                                    on_change=self.updated_values,
+                                )
+                            ),
+                            DataCell(
+                                TextField(
+                                    value=attrib_row.value,
+                                    border="none",
+                                    expand=True,
+                                    on_change=self.updated_values,
+                                )
+                            ),
+                        ],
+                    ),
+                )
+
+    def create_empty_table(self):
+        self.table.rows = (
+            [
+                DataRow(
+                    on_select_changed=self.row_selected,
+                    on_long_press=self.delete_row_confirm,
+                    cells=[
+                        DataCell(
+                            content=TextField(
+                                border="none",
+                                expand=True,
+                                on_change=self.updated_values,
+                            ),
+                        ),
+                        DataCell(
+                            content=TextField(
+                                border="none",
+                                expand=True,
+                                on_change=self.updated_values,
+                            )
+                        ),
+                    ],
+                ),
+                DataRow(
+                    on_select_changed=self.row_selected,
+                    on_long_press=self.delete_row_confirm,
+                    cells=[
+                        DataCell(
+                            TextField(
+                                border="none",
+                                expand=True,
+                                on_change=self.updated_values,
+                            )
+                        ),
+                        DataCell(
+                            TextField(
+                                border="none",
+                                expand=True,
+                                on_change=self.updated_values,
+                            )
+                        ),
+                    ],
+                ),
+            ],
+        )
+        self.table.update()
+
     def build(self):
         return self.table
 
@@ -208,8 +248,21 @@ class VariablesPage(Column):
     def __init__(self, page: Page):
         super().__init__()
         self.page = page
-
+        self.preset_service = PresetService()
+        self.attribute_service = AttributeService()
+        # self.attributes = self.attribute_service.get_attributes()
+        self.preset_names = self.preset_service.get_preset_names()
+        print(self.preset_names)
+        default_preset = self.preset_names[0] if len(self.preset_names) >= 1 else None
         # TEMPLATE SELECTOR
+        self.template_selector = Dropdown(
+            content_padding=10,
+            border_color=colors.WHITE70,
+            filled=True,
+            value=default_preset,
+            options=[dropdown.Option(i) for i in self.preset_names],
+            on_change=self.change_current_preset,
+        )
         self.controls.append(
             Container(
                 # width=150,
@@ -220,16 +273,8 @@ class VariablesPage(Column):
                     expand=True,
                     alignment=MainAxisAlignment.CENTER,
                     controls=[
-                        Text("Template: "),
-                        Dropdown(
-                            content_padding=10,
-                            value="test 1",
-                            options=[
-                                dropdown.Option("test 1"),
-                                dropdown.Option("test 2"),
-                                dropdown.Option("test3"),
-                            ],
-                        ),
+                        Text("Template: ", color=colors.WHITE70),
+                        self.template_selector,
                     ],
                 ),
                 alignment=alignment.center,
@@ -277,25 +322,19 @@ class VariablesPage(Column):
             ),
         )
         # OUTPUT NAME
-        self.folder_name_txt = Text("")
-        self.offset_slider = ft.Slider(
-            min=-100,
-            max=100,
-            value=0,
-            on_change=self.update_bottom_row_position,
-            label="{value}%",
+        self.folder_name_txt = Text("", color=colors.WHITE70)
+        self.bottom_row = Row(
+            alignment=MainAxisAlignment.CENTER,
+            controls=[
+                Text("Folder Name: ", color=colors.WHITE70),
+                self.folder_name_txt,
+            ],
         )
-        self.bottom_row = Row(controls=[Text("Folder Name: "), self.folder_name_txt])
-        self.controls.append(
-            Container(
-                content=self.bottom_row,
-                alignment=alignment.center,
-                margin=margin.only(left=20),
-            )
-        )
+        self.controls.append(self.bottom_row)
 
         # KEY VALUE GRID
-        self.table = VariablesEditor(self.page)
+        self.table = VariablesEditor(self.page, self.attribute_service)
+        self.update_folder_name_text()
         self.controls.append(
             Row(
                 alignment=MainAxisAlignment.CENTER,
@@ -345,6 +384,9 @@ class VariablesPage(Column):
     def build(self):
         pass
         # return self.controls
+
+    def change_current_preset(self, e):
+        e.page.pubsub.send_all_on_topic("selected_preset", self.template_selector.value)
 
 
 class AlertBox(UserControl):
