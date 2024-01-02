@@ -1,5 +1,6 @@
 import 'package:Folder_Struct_Maker/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
@@ -11,7 +12,7 @@ void main() async {
   //   await windowManager.setTitle('No title');
   //   await windowManager.show();
   // });
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
