@@ -1,7 +1,11 @@
-import 'package:Folder_Struct_Maker/screens/main/main_screen.dart';
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
+
+import 'screens/main_screen.dart';
 
 void main() async {
   //  CAN SET UP A CUSTOM TOP BAR
@@ -12,7 +16,13 @@ void main() async {
   //   await windowManager.setTitle('No title');
   //   await windowManager.show();
   // });
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    WindowManager.instance.setMinimumSize(const Size(1400, 1020));
+  }
   runApp(const ProviderScope(child: MyApp()));
+  getWindowSize();
 }
 
 class MyApp extends StatelessWidget {
@@ -25,9 +35,16 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         useMaterial3: true,
       ),
-      home: MainScreen(),
+      home: const MainScreen(),
     );
   }
+}
+
+void getWindowSize() {
+  FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
+  Size size = view.physicalSize;
+  print(size);
 }

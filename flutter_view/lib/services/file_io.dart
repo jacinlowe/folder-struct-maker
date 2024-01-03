@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:path/path.dart' as Path;
 
 void main() {
@@ -51,12 +50,13 @@ void testNode() {
 
 class Node {
   Node? parent;
-  List<Node> _children = List.empty(growable: true);
+  final List<Node> _children = List.empty(growable: true);
   String id = Random.secure().toString();
   dynamic data;
 
   Node({dynamic data, parent, children});
 
+  @override
   String toString() {
     return data.toString();
   }
@@ -74,9 +74,9 @@ class Node {
   int _getDepth(List<Node> node, {int depth = 0}) {
     if (node.isEmpty) return 0;
     depth++;
-    node.forEach((element) {
+    for (var element in node) {
       depth = max(depth, element._getDepth(element._children, depth: depth));
-    });
+    }
     return depth;
   }
 
@@ -132,3 +132,72 @@ final Map<String, dynamic> folderStructure = {
     {'Subfolder 2': []},
   ]
 };
+
+abstract class MakeFile {
+  Directory get parentPath;
+
+  void makeFile(Directory path) {}
+}
+
+class FolderData implements MakeFile {
+  final String title;
+  List<MakeFile>? children;
+  @override
+  Directory parentPath;
+
+  @override
+  FolderData(
+      {required this.title, required this.parentPath, required this.children});
+
+  @override
+  void makeFile(Directory path) {
+    print('Created Folder: $title');
+  }
+
+  FolderData createFileChild(
+      {required String title, required String extension, dynamic data}) {
+    children?.add(
+        FileData(title: title, extension: extension, parentPath: parentPath));
+    return this;
+  }
+
+  FolderData createFolderChild(
+      {required String title, List<MakeFile>? children}) {
+    children ?? [];
+    children?.add(
+        FolderData(title: title, parentPath: parentPath, children: children));
+    return this;
+  }
+}
+
+class FileData implements MakeFile {
+  final String title;
+  final String extension;
+  dynamic data;
+
+  @override
+  Directory parentPath;
+
+  FileData(
+      {required this.title,
+      required this.extension,
+      this.data,
+      required this.parentPath});
+
+  @override
+  void makeFile(Directory path) {
+    print('Created File: $title.$extension ');
+  }
+}
+
+List<MakeFile> struct = [
+  FolderData(title: 'test1', parentPath: Directory(''), children: [])
+      .createFileChild(title: 'file 1', extension: '.txt')
+      .createFileChild(title: 'file 2', extension: '.txt')
+      .createFileChild(title: 'file 3', extension: '.txt')
+      .createFileChild(title: 'file 4', extension: '.txt')
+      .createFolderChild(title: 'Subfolder 1'),
+  FolderData(title: 'test2', parentPath: Directory(''), children: []),
+  FileData(
+      title: 'Big single File', extension: 'txt', parentPath: Directory(''))
+];
