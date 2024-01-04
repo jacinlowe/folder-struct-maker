@@ -2,6 +2,8 @@ import 'package:Folder_Struct_Maker/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'parameter_field/parameter_field.dart';
+
 class CenterMenu extends StatelessWidget {
   const CenterMenu({
     super.key,
@@ -146,10 +148,7 @@ class CenterMenu extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(
               horizontal: defaultPadding * 2, vertical: defaultPadding / 2),
-          child: Container(
-            height: 600,
-            color: Colors.red,
-          ),
+          child: ParameterField(),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: defaultPadding * 2),
