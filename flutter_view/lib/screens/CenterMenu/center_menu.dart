@@ -1,16 +1,25 @@
 import 'package:Folder_Struct_Maker/constants.dart';
+import 'package:Folder_Struct_Maker/services/template_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'parameter_field/parameter_field.dart';
 
-class CenterMenu extends StatelessWidget {
+class CenterMenu extends HookConsumerWidget {
   const CenterMenu({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    bool hasUpdated = false;
+    ref.listen(templateNotifierProvider, (previous, next) {
+      if (previous != next) {
+        print('templates have changed: true');
+        hasUpdated = !hasUpdated;
+      }
+    });
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,7 +64,12 @@ class CenterMenu extends StatelessWidget {
             Column(
               children: [
                 OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ref
+                        .watch(templateNotifierProvider.notifier)
+                        .addTemplate('template');
+                    print(hasUpdated);
+                  },
                   child: Text(
                     'Create Template',
                     style: TextStyle(fontSize: 12, color: secondaryColor),
