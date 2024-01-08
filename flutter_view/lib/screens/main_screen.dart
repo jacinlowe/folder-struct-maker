@@ -1,4 +1,5 @@
 import 'package:Folder_Struct_Maker/constants.dart';
+import 'package:Folder_Struct_Maker/screens/CenterMenu/draggable_test.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +24,7 @@ class MainScreen extends StatelessWidget {
         children: [
           AttributesMenu(),
           Expanded(flex: 10, child: CenterMenu()),
+          // Expanded(flex: 10, child: DraggableTest()),
           Expanded(flex: 4, child: TreeViewMenu()),
         ],
       ),

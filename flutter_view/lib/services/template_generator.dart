@@ -1,6 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class TemplateGenerator extends Notifier<List<String>> {
+part '../generated/services/template_generator.g.dart';
+
+@riverpod
+class TemplateGenerator extends _$TemplateGenerator {
   @override
   List<String> build() {
     return [];
@@ -13,8 +17,6 @@ class TemplateGenerator extends Notifier<List<String>> {
   }
 }
 
-final templateNotifierProvider =
-    NotifierProvider<TemplateGenerator, List<String>>(TemplateGenerator.new);
 
 // final templateNotifierHasUpdated = Provider<bool>((ref) {
 //   bool result;

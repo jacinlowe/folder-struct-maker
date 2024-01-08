@@ -1,9 +1,11 @@
+import 'package:Folder_Struct_Maker/Features/attribute_fields/attributeProvider.dart';
 import 'package:Folder_Struct_Maker/constants.dart';
 import 'package:Folder_Struct_Maker/services/template_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../Features/attribute_fields/attribute_combiner_consumer.dart';
 import 'parameter_field/parameter_field.dart';
 
 class CenterMenu extends HookConsumerWidget {
@@ -14,12 +16,13 @@ class CenterMenu extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool hasUpdated = false;
-    ref.listen(templateNotifierProvider, (previous, next) {
+    ref.listen(templateGeneratorProvider, (previous, next) {
       if (previous != next) {
         print('templates have changed: true');
         hasUpdated = !hasUpdated;
       }
     });
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -66,7 +69,7 @@ class CenterMenu extends HookConsumerWidget {
                 OutlinedButton(
                   onPressed: () {
                     ref
-                        .watch(templateNotifierProvider.notifier)
+                        .watch(templateGeneratorProvider.notifier)
                         .addTemplate('template');
                     print(hasUpdated);
                   },
@@ -129,10 +132,7 @@ class CenterMenu extends HookConsumerWidget {
                               size: 24,
                             ),
                           ),
-                          Text(
-                            'My Project_Hugo Boss_21_Commercial_11-23-32',
-                            style: TextStyle(fontSize: 16),
-                          )
+                          SizedBox(width: 350, child: FolderNamePreview()),
                         ],
                       )
                     ]),

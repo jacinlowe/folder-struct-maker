@@ -1,11 +1,16 @@
+import 'package:Folder_Struct_Maker/Features/consumer.dart';
+import 'package:dart_casing/dart_casing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../Features/attribute_fields/AttributeTypes/attribute_model.dart';
 import '../../constants.dart';
 
 class AttributesMenu extends StatefulWidget {
-  const AttributesMenu({super.key});
+  AttributesMenu({super.key});
+  final List<({String name, AttributeType type})> attributeText =
+      attributeTypeList;
 
   @override
   State<AttributesMenu> createState() => _AttributesMenuState();
@@ -28,10 +33,10 @@ class _AttributesMenuState extends State<AttributesMenu> {
               SizedBox(
                 height: 150,
                 child: Padding(
-                  padding: EdgeInsets.all(defaultPadding),
+                  padding: const EdgeInsets.all(defaultPadding),
                   child: Column(
                     children: [
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Icon(
@@ -46,9 +51,9 @@ class _AttributesMenuState extends State<AttributesMenu> {
                       ),
                       Row(
                         children: [
-                          Spacer(),
+                          const Spacer(),
                           IconButton(
-                            icon: Icon(Icons.menu_open_outlined),
+                            icon: const Icon(Icons.menu_open_outlined),
                             iconSize: 28,
                             onPressed: () {
                               setState(() {
@@ -90,59 +95,69 @@ class _AttributesMenuState extends State<AttributesMenu> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: attributeText.length,
+                          itemCount: widget.attributeText.length,
                           itemBuilder: (context, index) {
-                            String itemText = attributeText[index];
-                            return Material(
-                              type: MaterialType.transparency,
-                              child: ListTile(
-                                // contentPadding: const EdgeInsets.symmetric(
-                                //     horizontal: defaultPadding),
-                                tileColor: primaryColor,
-                                title: Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: defaultPadding * 2,
-                                      ),
-                                      Container(
-                                          width: 4,
-                                          height: 26,
-                                          color: secondaryColor),
-                                      SizedBox(
-                                        width: defaultPadding,
-                                      ),
-                                      Text(
-                                        itemText,
-                                        style: GoogleFonts.ubuntu(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                onTap: () {},
+                            String itemText = widget.attributeText[index].name;
+                            AttributeType itemData =
+                                widget.attributeText[index].type;
+                            return Draggable(
+                              data: itemData,
+                              feedback: Container(
+                                  width: 150,
+                                  height: 50,
+                                  color: Colors.white,
+                                  child: Center(
+                                    child: Text(
+                                      itemText,
+                                      style: GoogleFonts.ubuntu(
+                                          color: Colors.black54,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  )),
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: customListTileBox(itemText),
                               ),
                             );
                           }),
                       const SizedBox(height: defaultPadding / 2),
                     ]),
-              )
+              ),
+              const Spacer(),
+              const ActivityWidget()
             ],
           ),
         )).animate().scaleX();
   }
-}
 
-final List<String> attributeText = [
-  'Date',
-  'Number',
-  'Loop',
-  "Saveable Field",
-  'Dropdown',
-  'User Name',
-  'Custom Text'
-];
+  ListTile customListTileBox(String itemText) {
+    return ListTile(
+      // contentPadding: const EdgeInsets.symmetric(
+      //     horizontal: defaultPadding),
+      tileColor: primaryColor,
+      title: Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              width: defaultPadding * 2,
+            ),
+            Container(width: 4, height: 26, color: secondaryColor),
+            const SizedBox(
+              width: defaultPadding,
+            ),
+            Text(
+              itemText,
+              style:
+                  GoogleFonts.ubuntu(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ),
+      onTap: () {},
+    );
+  }
+}
