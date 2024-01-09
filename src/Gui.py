@@ -20,6 +20,9 @@ from reloading import reloading
 # PAGES
 from Pages.variables_page import VariablesPage
 from Pages.presets_page import PresetFolderStructPage
+from Services.dataservice import PresetService
+from Services.event_bus import EventBus
+from Services.logger import Logger
 
 FOLDER_ICON = (
     r"C:\Users\jacin\Desktop\Programming\adventOfCode\Day 2\videofolderblank_99341.ico"
@@ -32,12 +35,16 @@ Secondary_Color = "#FF961C"
 Light_Grey = "#F5F5F5"
 Grey = "#ABAEB4"
 
+logger = Logger()
+event_bus = EventBus()
+preset_service = PresetService()
+
 
 class PageThree(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout()
-        layout.addWidget(QPushButton("Button on Page One"))
+        layout.addWidget(QPushButton("Button on Page One s"))
         self.setLayout(layout)
 
 
@@ -91,10 +98,10 @@ class CustomTitleBar(QWidget):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, event_bus: EventBus, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Multi-Page Application")
-
+        self.event_bus = event_bus
         # self.setWindowFlags(Qt.FramelessWindowHint)
         # self.setAttribute(Qt.WA_TranslucentBackground)
 
@@ -116,6 +123,7 @@ class MainWindow(QMainWindow):
 
         self.setup_menu_bar()
         self.apply_custom_styles()
+        self.event_bus.add_event("clicker")
         # Set the window size
 
     def load_data(self):
@@ -180,12 +188,13 @@ class MainWindow(QMainWindow):
 
         # Help Menu (Placeholder)
         help_menu = menu_bar.addMenu("Help")
+        logger.log("Menu Setup")
 
 
 @reloading
 def run_program():
     app = QtWidgets.QApplication(sys.argv)
-    w = MainWindow()
+    w = MainWindow(event_bus=event_bus)
     w.show()
     app.exec()
 

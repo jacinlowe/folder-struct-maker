@@ -4,10 +4,15 @@ from typing import Any, Union
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 from uuid import uuid1
+from pathlib import Path
 
 
 def create_preset_id() -> str:
     return str(uuid1())
+
+
+PRESET_FILE_PATH = Path(__file__).parent / r"presets.json"
+ATTRIBUTE_FILE_PATH = Path(__file__).parent / r"attributes.json"
 
 
 @dataclass
@@ -20,7 +25,7 @@ class File:
     def get_file_name(self):
         if self.extension[0] != ".":
             self.extension = f".{self.extension}"
-        return self.filename + self.extension
+        return self.file_name + self.extension
 
 
 class Folder(BaseModel):
@@ -32,7 +37,7 @@ class Folder(BaseModel):
 class Preset:
     id: str
     preset_name: str
-    structure: list[Union[File, Folder]] = None
+    structure: Union[list[Union[File, Folder]], None] = None
 
 
 class PresetData(BaseModel):
@@ -42,7 +47,7 @@ class PresetData(BaseModel):
 class AttributeService:
     def __init__(self):
         self.variables = []
-        self.attribute_file = r"src\Services\attributes.json"
+        self.attribute_file = ATTRIBUTE_FILE_PATH
 
     def __del__(self):
         print(f"destroying object: {type(self)}")
@@ -76,17 +81,22 @@ class AttributeService:
 
 
 class PresetService:
-    file_path = r"src\Services\presets.json"
+    file_path = PRESET_FILE_PATH
 
     def __init__(self) -> None:
         self._presets: PresetData = PresetData(presets=[])
         self.load()
 
-    # def __del__(self):
-    #     print(f"deleting service: {type(self)}")
+    def __del__(self):
+        print(f"deleting service: {type(self)}")
+        try:
+            self.save_preset()
+        except IOError:
+            print(f"cannot save {self.file_path.name} file quitting")
 
     def add_preset(self, preset: Preset):
         self._presets.presets.append(preset)
+        self.save_preset()
 
     def get_presets(self) -> list[Preset]:
         return self._presets.presets
@@ -128,6 +138,7 @@ class DataService:
 
     def load_data(self):
         try:
+            print(self.file_path)
             with open(self.file_path, "r") as file:
                 return json.load(file)
         except FileNotFoundError as e:
@@ -135,16 +146,20 @@ class DataService:
             return None
 
 
-def save_presets(presets: list[Preset]):
-    dataservice = DataService("./src/Services/presets.json")
-    data = PresetData(presets=presets)
-    dataservice.save_data(data.model_dump())
+# def save_presets(presets: list[Preset]):
+#     dataservice = DataService("./src/Services/presets.json")
+#     data = PresetData(presets=presets)
+#     dataservice.save_data(data.model_dump())
 
 
-def load_presets() -> PresetData:
-    dataservice = DataService("./src/Services/presets.json")
-    data = dataservice.load_data()
-    return PresetData.model_validate(data)
+# def load_presets() -> PresetData:
+#     dataservice = DataService("./src/Services/presets.json")
+#     data = dataservice.load_data()
+#     return PresetData.model_validate(data)
+
+
+def create_blank_preset(name: str):
+    return Preset(id=create_preset_id(), preset_name=name)
 
 
 if __name__ == "__main__":

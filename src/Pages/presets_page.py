@@ -24,6 +24,10 @@ from PySide6.QtWidgets import (
 )
 
 from Services.dataservice import PresetService
+from Services.logger import Logger
+
+
+logger = Logger()
 
 
 class FileIconProvider(QFileIconProvider):
@@ -260,8 +264,10 @@ class PresetFolderStructPage(QWidget):
         root_list = self.preset_model.invisibleRootItem()
         self.preset_model.item_clicked.connect(self.handle_item_clicked)
 
-        for i in preset_service.presets.keys():
+        for i in preset_service._presets.keys():
             self.preset_model.create_item(i)
+
+        logger.log("Data loaded from presets page")
 
     def handle_item_clicked(self, item_text):
         print(
