@@ -4,14 +4,14 @@ import 'package:dart_casing/dart_casing.dart';
 import 'package:intl/intl.dart';
 
 enum AttributeType {
-  Date,
-  Number,
-  Loop,
-  Saveable_Field,
-  Dropdown,
-  User_Name,
   Custom_Text,
-  Delimiter,
+  Number,
+  Dropdown,
+  Saveable_Field,
+  User_Name,
+  Date,
+  Loop,
+  Custom_Delimiter,
 }
 
 List<({String name, AttributeType type})> attributeTypeList = AttributeType
@@ -126,7 +126,9 @@ class CustomTextAttribute<T extends String> extends Attribute<String> {
 
 class NumberAttribute<T extends num> extends Attribute<num> {
   NumberAttribute({required super.id, required super.name})
-      : super(type: AttributeType.Number, defaultValue: 001, value: 001);
+      : super(type: AttributeType.Number, defaultValue: 1, value: 1);
+
+  NumberFormat padding = NumberFormat('0000');
 
   @override
   AttributeType get type => AttributeType.Number;
@@ -134,7 +136,8 @@ class NumberAttribute<T extends num> extends Attribute<num> {
   late bool autoIncrement = false;
   @override
   String toString() {
-    return value.toString();
+    final paddedResult = padding.format(value);
+    return paddedResult.toString();
   }
 
   void changeAutoIncrement() {
@@ -142,7 +145,7 @@ class NumberAttribute<T extends num> extends Attribute<num> {
   }
 
   void increment() {
-    defaultValue++;
+    value++;
   }
 
   @override

@@ -32,12 +32,12 @@ class CenterMenu extends HookConsumerWidget {
           style: GoogleFonts.ubuntu(
               fontSize: 48, fontWeight: FontWeight.w400, color: Colors.black),
         ),
-        SizedBox(
+        const SizedBox(
           height: defaultPadding,
         ),
         Row(
           children: [
-            Spacer(),
+            const Spacer(),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
@@ -46,7 +46,7 @@ class CenterMenu extends HookConsumerWidget {
                 style: GoogleFonts.ubuntu(fontSize: 18),
               ),
             ),
-            DropdownMenu(
+            const DropdownMenu(
                 width: 400,
                 initialSelection: 'Default Project',
                 dropdownMenuEntries: [
@@ -57,13 +57,13 @@ class CenterMenu extends HookConsumerWidget {
                       label:
                           'Default Project with long text to make sure we see it all'),
                 ]),
-            Spacer(),
+            const Spacer(),
           ],
         ),
-        SizedBox(height: defaultPadding),
+        const SizedBox(height: defaultPadding),
         Row(
           children: [
-            Spacer(),
+            const Spacer(),
             Column(
               children: [
                 OutlinedButton(
@@ -73,36 +73,38 @@ class CenterMenu extends HookConsumerWidget {
                         .addTemplate('template');
                     print(hasUpdated);
                   },
-                  child: Text(
+                  style: ButtonStyle(
+                      padding:
+                          MaterialStateProperty.all(const EdgeInsets.all(16)),
+                      side: MaterialStateProperty.all(
+                          const BorderSide(color: secondaryColor, width: 2)),
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)))),
+                  child: const Text(
                     'Create Template',
                     style: TextStyle(fontSize: 12, color: secondaryColor),
                   ),
-                  style: ButtonStyle(
-                      padding: MaterialStateProperty.all(EdgeInsets.all(16)),
-                      side: MaterialStateProperty.all(
-                          BorderSide(color: secondaryColor, width: 2)),
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)))),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: defaultPadding / 4,
                 ),
                 OutlinedButton(
                   onPressed: () {},
-                  child: Text(
-                    'Modify Template',
-                    style: TextStyle(fontSize: 12, color: Colors.black87),
-                  ),
                   style: ButtonStyle(
-                      padding: MaterialStateProperty.all(EdgeInsets.all(16)),
+                      padding:
+                          MaterialStateProperty.all(const EdgeInsets.all(16)),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5)),
                       )),
+                  child: const Text(
+                    'Modify Template',
+                    style: TextStyle(fontSize: 12, color: Colors.black87),
+                  ),
                 ),
               ],
             ),
-            SizedBox(width: defaultPadding),
+            const SizedBox(width: defaultPadding),
             Container(
               width: 450,
               height: 60,
@@ -111,8 +113,8 @@ class CenterMenu extends HookConsumerWidget {
                       width: 2,
                       style: BorderStyle.solid,
                       color: secondaryColor)),
-              child: Padding(
-                padding: const EdgeInsets.all(defaultPadding / 4),
+              child: const Padding(
+                padding: EdgeInsets.all(defaultPadding / 4),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +127,7 @@ class CenterMenu extends HookConsumerWidget {
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 horizontal: defaultPadding / 2),
                             child: Icon(
                               Icons.folder,
@@ -138,29 +140,31 @@ class CenterMenu extends HookConsumerWidget {
                     ]),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: defaultPadding,
             ),
             ElevatedButton(
-              onPressed: () {},
-              child: Text(
-                'Create Project',
-                style: TextStyle(color: Colors.white),
-              ),
+              onPressed: () {
+                ref.read(attributeListProvider.notifier).createProject();
+              },
               style: ElevatedButton.styleFrom(
                   backgroundColor: secondaryColor,
                   elevation: 3,
-                  fixedSize: Size(140, 60),
+                  fixedSize: const Size(140, 60),
                   // minimumSize: Size(30, 20),
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5))),
+              child: const Text(
+                'Create Project',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-            Spacer()
+            const Spacer()
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
+        const Padding(
+          padding: EdgeInsets.symmetric(
               horizontal: defaultPadding * 2, vertical: defaultPadding / 2),
           child: ParameterField(),
         ),
@@ -168,7 +172,7 @@ class CenterMenu extends HookConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: defaultPadding * 2),
           child: Row(
             children: [
-              ToggleOptionsSwitch(),
+              const ToggleOptionsSwitch(),
               Text(
                 'Toggle Options',
                 style: GoogleFonts.ubuntu(

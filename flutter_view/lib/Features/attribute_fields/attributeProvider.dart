@@ -18,6 +18,7 @@ class AttributeList extends _$AttributeList {
     final name = attribute.name;
     final newAttribute = attributeFactory(attribute, name);
     state = [...state, newAttribute];
+    print('item should be added');
   }
 
   void removeAttribute(Attribute target) {
@@ -51,12 +52,29 @@ class AttributeList extends _$AttributeList {
     state = tempState;
     ref.notifyListeners();
   }
+
+  void createProject() {
+    for (final item in state) {
+      if (item.runtimeType == NumberAttribute) {
+        item as NumberAttribute;
+        if (item.autoIncrement == true) {
+          item.increment();
+          ref.notifyListeners();
+          print(item.toString());
+        }
+      }
+    }
+    print('creating project from attributes');
+  }
 }
 
 @riverpod
 String attributeCombiner(AttributeCombinerRef ref) {
   final title = ref.watch(attributeListProvider).fold<String>('',
-      (previousValue, element) => '${previousValue}$DELIMITER${element.value}');
+      (previousValue, element) {
+    if (previousValue == '') return '${previousValue}${element.toString()}';
+    return '${previousValue}$DELIMITER${element.toString()}';
+  });
 
   return title;
 }

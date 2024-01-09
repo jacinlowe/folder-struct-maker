@@ -1,22 +1,24 @@
-import 'package:Folder_Struct_Maker/Features/consumer.dart';
-import 'package:dart_casing/dart_casing.dart';
+import 'package:Folder_Struct_Maker/Features/attribute_fields/attributeProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:dart_casing/dart_casing.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../Features/consumer.dart';
 import '../../Features/attribute_fields/AttributeTypes/attribute_model.dart';
 import '../../constants.dart';
 
-class AttributesMenu extends StatefulWidget {
+class AttributesMenu extends StatefulHookConsumerWidget {
   AttributesMenu({super.key});
   final List<({String name, AttributeType type})> attributeText =
       attributeTypeList;
 
   @override
-  State<AttributesMenu> createState() => _AttributesMenuState();
+  ConsumerState<AttributesMenu> createState() => _AttributesMenuState();
 }
 
-class _AttributesMenuState extends State<AttributesMenu> {
+class _AttributesMenuState extends ConsumerState<AttributesMenu> {
   int flexNumber = 4;
   @override
   Widget build(BuildContext context) {
@@ -102,9 +104,15 @@ class _AttributesMenuState extends State<AttributesMenu> {
                             String itemText = widget.attributeText[index].name;
                             AttributeType itemData =
                                 widget.attributeText[index].type;
-                            return Draggable(
-                              data: itemData,
-                              feedback: Container(
+                            return GestureDetector(
+                              onDoubleTap: () {
+                                ref
+                                    .read(attributeListProvider.notifier)
+                                    .addAttribute(itemData);
+                              },
+                              child: Draggable(
+                                data: itemData,
+                                feedback: Container(
                                   width: 150,
                                   height: 50,
                                   color: Colors.white,
@@ -116,10 +124,12 @@ class _AttributesMenuState extends State<AttributesMenu> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
-                                  )),
-                              child: Material(
-                                type: MaterialType.transparency,
-                                child: customListTileBox(itemText),
+                                  ),
+                                ),
+                                child: Material(
+                                  type: MaterialType.transparency,
+                                  child: customListTileBox(itemText),
+                                ),
                               ),
                             );
                           }),
@@ -138,24 +148,22 @@ class _AttributesMenuState extends State<AttributesMenu> {
       // contentPadding: const EdgeInsets.symmetric(
       //     horizontal: defaultPadding),
       tileColor: primaryColor,
-      title: Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(
-              width: defaultPadding * 2,
-            ),
-            Container(width: 4, height: 26, color: secondaryColor),
-            const SizedBox(
-              width: defaultPadding,
-            ),
-            Text(
-              itemText,
-              style:
-                  GoogleFonts.ubuntu(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const SizedBox(
+            width: defaultPadding * 2,
+          ),
+          Container(width: 4, height: 26, color: secondaryColor),
+          const SizedBox(
+            width: defaultPadding,
+          ),
+          Text(
+            itemText,
+            style:
+                GoogleFonts.ubuntu(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+        ],
       ),
       onTap: () {},
     );

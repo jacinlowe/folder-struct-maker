@@ -24,7 +24,6 @@ class MainScreen extends StatelessWidget {
         children: [
           AttributesMenu(),
           Expanded(flex: 10, child: CenterMenu()),
-          // Expanded(flex: 10, child: DraggableTest()),
           Expanded(flex: 4, child: TreeViewMenu()),
         ],
       ),

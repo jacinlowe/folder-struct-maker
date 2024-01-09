@@ -83,115 +83,131 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
               child: SizedBox(
                 height: MediaQuery.of(context).size.height / 2,
                 // width: MediaQuery.sizeOf(context).width / 4,
-                child: Column(
-                  children: [
-                    ReorderableListView.builder(
-                      onReorder: (oldIndex, newIndex) {
-                        ref
-                            .read(attributeListProvider.notifier)
-                            .reorder(oldIndex, newIndex);
-                      },
-                      shrinkWrap: true,
-                      itemCount: targetData.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final item = targetData[index];
-                        final key = Key('$index');
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      ReorderableListView.builder(
+                        onReorder: (oldIndex, newIndex) {
+                          ref
+                              .read(attributeListProvider.notifier)
+                              .reorder(oldIndex, newIndex);
+                        },
+                        shrinkWrap: true,
+                        itemCount: targetData.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = targetData[index];
+                          final key = Key('$index');
 
-                        return Container(
-                          key: key,
-                          // width: 900,
-                          height: 75,
-                          color: Colors.blue[400],
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: defaultPadding * 2,
-                              ),
-                              SizedBox(
-                                width: 70,
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      attributeTypeList
-                                          .firstWhere(
-                                              (e) => e.type == item.type)
-                                          .name,
-                                      // item.type.name,
-                                      overflow: TextOverflow.fade,
-                                      softWrap: false,
-                                      style: TextStyle(
-                                        fontSize: 14,
+                          return Dismissible(
+                            key: key,
+                            onDismissed: (direction) {
+                              ref
+                                  .read(attributeListProvider.notifier)
+                                  .removeAttribute(item);
+                            },
+                            child: Container(
+                              key: key,
+                              // width: 900,
+                              height: 75,
+                              // color: Colors.blue[400],
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: defaultPadding * 2,
+                                  ),
+                                  SizedBox(
+                                    width: 70,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          attributeTypeList
+                                              .firstWhere(
+                                                  (e) => e.type == item.type)
+                                              .name,
+                                          // item.type.name,
+                                          overflow: TextOverflow.fade,
+                                          softWrap: false,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        Switch(
+                                            value: true,
+                                            onChanged: (value) => !value),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: defaultPadding,
+                                  ),
+                                  SizedBox(
+                                    width: 250,
+                                    height: 45,
+                                    child: GestureDetector(
+                                      onDoubleTap: () {
+                                        setState(() => readOnly = !readOnly);
+                                        print(readOnly);
+                                      },
+                                      child: TextField(
+                                        key: key,
+                                        readOnly: false,
+                                        onChanged: (value) => ref
+                                            .read(
+                                                attributeListProvider.notifier)
+                                            .updateAttribute(index,
+                                                name: value),
+                                        textAlignVertical:
+                                            TextAlignVertical.bottom,
+                                        decoration: InputDecoration(
+                                            hintText: item.name,
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(4))),
                                       ),
                                     ),
-                                    Switch(
-                                        value: true,
-                                        onChanged: (value) => !value),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: defaultPadding,
-                              ),
-                              SizedBox(
-                                width: 250,
-                                height: 45,
-                                child: GestureDetector(
-                                  onDoubleTap: () {
-                                    setState(() => readOnly = !readOnly);
-                                    print(readOnly);
-                                  },
-                                  child: TextField(
-                                    key: key,
-                                    readOnly: false,
-                                    onChanged: (value) => ref
-                                        .read(attributeListProvider.notifier)
-                                        .updateAttribute(index, name: value),
-                                    textAlignVertical: TextAlignVertical.bottom,
-                                    decoration: InputDecoration(
-                                        hintText: item.name,
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4))),
                                   ),
-                                ),
+                                  SizedBox(
+                                    key: key,
+                                    width: defaultPadding / 2,
+                                  ),
+                                  SizedBox(
+                                    width: 250,
+                                    height: 45,
+                                    child: TextField(
+                                      onChanged: (value) => ref
+                                          .read(attributeListProvider.notifier)
+                                          .updateAttribute(index, value: value),
+                                      inputFormatters: [
+                                        item.type == AttributeType.Number
+                                            ? FilteringTextInputFormatter
+                                                .digitsOnly
+                                            : FilteringTextInputFormatter
+                                                .singleLineFormatter
+                                      ],
+                                      key: key,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: InputDecoration(
+                                          hintText: item.toString(),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(4))),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                key: key,
-                                width: defaultPadding / 2,
-                              ),
-                              SizedBox(
-                                width: 250,
-                                height: 45,
-                                child: TextField(
-                                  onChanged: (value) => ref
-                                      .read(attributeListProvider.notifier)
-                                      .updateAttribute(index, value: value),
-                                  inputFormatters: [
-                                    item.type == AttributeType.Number
-                                        ? FilteringTextInputFormatter.digitsOnly
-                                        : FilteringTextInputFormatter
-                                            .singleLineFormatter
-                                  ],
-                                  key: key,
-                                  textAlignVertical: TextAlignVertical.bottom,
-                                  decoration: InputDecoration(
-                                      hintText: item.toString(),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4))),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ).animate(key: key).fadeIn().shimmer();
-                      },
-                      // separatorBuilder: (context, index) => SizedBox(
-                      //   height: 10,
-                      // ),
-                    ),
-                  ],
+                            ).animate(key: key).fadeIn().shimmer(),
+                          );
+                        },
+                        // separatorBuilder: (context, index) => SizedBox(
+                        //   height: 10,
+                        // ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

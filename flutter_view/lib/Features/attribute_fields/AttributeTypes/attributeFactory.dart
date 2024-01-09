@@ -9,12 +9,12 @@ Attribute attributeFactory(AttributeType attribute, String name) {
     case AttributeType.Date:
       return DateAttribute(id: _uuid, name: name);
     case AttributeType.Number:
-      return NumberAttribute(id: _uuid, name: name);
+      return NumberAttribute(id: _uuid, name: name)..changeAutoIncrement();
     case AttributeType.Loop:
     case AttributeType.Saveable_Field:
     case AttributeType.Dropdown:
     case AttributeType.User_Name:
-    case AttributeType.Delimiter:
+    case AttributeType.Custom_Delimiter:
       // Return appropriate AttributeBase implementation
       //TODO Add all implementations
       return CustomTextAttribute(id: _uuid, name: name);
