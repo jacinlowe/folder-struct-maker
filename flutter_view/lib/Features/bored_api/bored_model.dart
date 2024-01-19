@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part '../generated/Features/bored_model.freezed.dart';
-part '../generated/Features/bored_model.g.dart';
+part '../../generated/Features/bored_api/bored_model.freezed.dart';
+part '../../generated/Features/bored_api/bored_model.g.dart';
 
 @freezed
 class Activity with _$Activity {

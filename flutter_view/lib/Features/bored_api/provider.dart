@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 import 'bored_model.dart';
 
-part '../generated/Features/provider.g.dart';
+part '../../generated/Features/bored_api/provider.g.dart';
 
 @riverpod
 Future<Activity> activity(ActivityRef ref) async {
