@@ -2,7 +2,41 @@ import 'dart:io';
 import 'dart:math';
 import 'package:path/path.dart' as Path;
 
-void main() {
+void main() async {
+  final tempFolder = testCreateTempFolder();
+  recursivelyCreateFolders(tempFolder, depth: 4);
+  // await Future.wait([
+  //   createFolder(tempFolder, 'test1'),
+  //   createFolder(tempFolder, 'test2'),
+  //   createFolder(tempFolder, 'test3'),
+  //   createFolder(tempFolder, 'test4'),
+  //   createFile(
+  //     parentFolder: tempFolder,
+  //     fileName: 'testFile1.txt',
+  //     fileContent: null,
+  //   ),
+  //   copyFile(
+  //       sourceFile:
+  //           File(Path.join(tempFolder.parent.path, 'dummy project.aep')),
+  //       destinationFile: Directory(Path.join(tempFolder.path, 'testCopy.aep')))
+  // ]);
+}
+
+void recursivelyCreateFolders(Directory parentFolder,
+    {required int depth}) async {
+  final folderList = List.generate(
+      4,
+      (index) =>
+          createFolder(parentFolder, 'depth_ $depth _test ${index + 1}'));
+
+  for (var element in folderList) {
+    if (depth <= 0) return;
+    final result = await element;
+    return recursivelyCreateFolders(result, depth: depth - 1);
+  }
+}
+
+Directory testCreateTempFolder() {
   var pathMap = Path.joinAll([
     'D:',
     'CODE_PLAYGROUND',
@@ -19,14 +53,14 @@ void main() {
   final Directory tempFolder =
       Directory(Path.join(dummyFolder.path, 'tempFolder'));
   print('sys temp location: ${Directory.systemTemp}');
-  print(currentDirectory);
-  print(rootFolder);
-  print(dummyFolder);
+  // print(currentDirectory);
+  // print(rootFolder);
+  // print(dummyFolder);
   if (dummyFolder.existsSync()) {
-    Directory(Path.join(dummyFolder.path, 'tempFolder')).create();
+    print('creating Temp Folder: ${tempFolder.path}');
+    tempFolder.createSync(recursive: true);
   }
-
-  // myFile.readAsBytes().then((Uint8List contents) => print(contents));
+  return tempFolder;
 }
 
 Directory getTempDir() {
@@ -42,162 +76,36 @@ Directory getTempDir() {
   return tempFolder;
 }
 
-void testNode() {
-  final rootNode = Node();
-  rootNode
-      .addChild(Node(parent: null, children: [], data: 'Jacin Lowe Folder'));
+Future<Directory> createFolder(
+    Directory? parentFolder, String folderName) async {
+  if (parentFolder != null) {
+    final Directory folderPath =
+        Directory(Path.join(parentFolder.absolute.path, folderName));
+    return await folderPath.create(recursive: true);
+  } else {
+    return await Directory(Path.join(Directory.current.path, folderName))
+        .create(recursive: true);
+  }
 }
 
-class Node {
-  Node? parent;
-  final List<Node> _children = List.empty(growable: true);
-  String id = Random.secure().toString();
-  dynamic data;
+Future<File> createFile(
+    {required Directory parentFolder,
+    required String fileName,
+    String? fileContent}) async {
+  final String filePath = Path.join(parentFolder.absolute.path, fileName);
+  final File file = File(filePath);
+  if (!file.existsSync()) return await File(filePath).create(exclusive: true);
+  return file;
+}
 
-  Node({dynamic data, parent, children});
+Future<File> copyFile(
+    {required File sourceFile, required Directory destinationFile}) async {
+  if (!sourceFile.existsSync()) return Future.error(FileNotFoundException());
+  return sourceFile.copy(destinationFile.path);
+}
 
+class FileNotFoundException extends FileSystemException {
   @override
-  String toString() {
-    return data.toString();
-  }
-
-  addChild(Node child) {
-    _children.add(child);
-  }
-
-  removeChild(Node child) {
-    if (_children.isEmpty) throw Exception('Node has no children');
-    bool result = _children.remove(child);
-    if (!result) throw Exception('Could not remove child');
-  }
-
-  int _getDepth(List<Node> node, {int depth = 0}) {
-    if (node.isEmpty) return 0;
-    depth++;
-    for (var element in node) {
-      depth = max(depth, element._getDepth(element._children, depth: depth));
-    }
-    return depth;
-  }
-
-  int get depth {
-    return _getDepth(_children);
-  }
+  // TODO: implement message
+  String get message => 'Source File not found $path ';
 }
-
-class NoChildrenException implements Exception {
-  NoChildrenException([message]);
-}
-
-class TreeNode {
-  List<TreeNode> children = [];
-
-  void addChild(TreeNode child) {
-    children.add(child);
-  }
-}
-
-void createFolderStruct(Map<String, dynamic> struct) {
-  final tempDir = getTempDir();
-  final rootFolder = struct.entries.first;
-  final currentFolder = Directory(Path.join(tempDir.path, rootFolder.key));
-  currentFolder.createSync(recursive: true);
-
-  createDir(parent, subItem) {
-    // if (folder.)
-  }
-  if (rootFolder.value.runtimeType is List && rootFolder.value.length >= 1) {
-    //walk the list and check for folders or if file generate file.
-
-    rootFolder.value.forEach((subItem) => {
-          if (subItem.runtimeType == String)
-            {
-              //This is a file
-            }
-          else
-            {
-              //this is a folder
-              // subItem.key;
-            }
-        });
-  }
-}
-
-final Map<String, dynamic> folderStructure = {
-  'folder name 1': [
-    'file1.txt',
-    'file2.txt',
-    'file3.txt',
-    'file4.txt',
-    {'Subfolder 2': []},
-  ]
-};
-
-abstract class MakeFile {
-  Directory get parentPath;
-
-  void makeFile(Directory path) {}
-}
-
-class FolderData implements MakeFile {
-  final String title;
-  List<MakeFile>? children;
-  @override
-  Directory parentPath;
-
-  @override
-  FolderData(
-      {required this.title, required this.parentPath, required this.children});
-
-  @override
-  void makeFile(Directory path) {
-    print('Created Folder: $title');
-  }
-
-  FolderData createFileChild(
-      {required String title, required String extension, dynamic data}) {
-    children?.add(
-        FileData(title: title, extension: extension, parentPath: parentPath));
-    return this;
-  }
-
-  FolderData createFolderChild(
-      {required String title, List<MakeFile>? children}) {
-    children ?? [];
-    children?.add(
-        FolderData(title: title, parentPath: parentPath, children: children));
-    return this;
-  }
-}
-
-class FileData implements MakeFile {
-  final String title;
-  final String extension;
-  dynamic data;
-
-  @override
-  Directory parentPath;
-
-  FileData(
-      {required this.title,
-      required this.extension,
-      this.data,
-      required this.parentPath});
-
-  @override
-  void makeFile(Directory path) {
-    print('Created File: $title.$extension ');
-  }
-}
-
-List<MakeFile> struct = [
-  FolderData(title: 'test1', parentPath: Directory(''), children: [])
-      .createFileChild(title: 'file 1', extension: '.txt')
-      .createFileChild(title: 'file 2', extension: '.txt')
-      .createFileChild(title: 'file 3', extension: '.txt')
-      .createFileChild(title: 'file 4', extension: '.txt')
-      .createFolderChild(title: 'Subfolder 1'),
-  FolderData(title: 'test2', parentPath: Directory(''), children: []),
-  FileData(
-      title: 'Big single File', extension: 'txt', parentPath: Directory(''))
-];
