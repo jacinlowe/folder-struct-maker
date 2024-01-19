@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../../Features/bored_model.dart';
+part of '../../../Features/bored_api/bored_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

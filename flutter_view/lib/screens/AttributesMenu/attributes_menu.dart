@@ -1,13 +1,12 @@
-import 'package:Folder_Struct_Maker/Features/attribute_fields/attributeProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:dart_casing/dart_casing.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../Features/consumer.dart';
-import '../../Features/attribute_fields/AttributeTypes/attribute_model.dart';
 import '../../constants.dart';
+import '../../Features/attribute_fields/attributeProvider.dart';
+import '../../Features/bored_api/consumer.dart';
+import '../../Features/attribute_fields/AttributeTypes/attribute_model.dart';
 
 class AttributesMenu extends StatefulHookConsumerWidget {
   AttributesMenu({super.key});

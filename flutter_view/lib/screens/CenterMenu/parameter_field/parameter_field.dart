@@ -6,8 +6,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../Features/attribute_fields/dropdown_attribute_parameter_widget.dart';
 import '../../../constants.dart';
 import '../../../services/row_generator.dart';
+import '../../../Features/attribute_fields/text_attribute_parameter_widget.dart';
 
 class ParameterField extends StatefulHookConsumerWidget {
   const ParameterField({
@@ -23,8 +25,6 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
   @override
   Widget build(BuildContext context) {
     List<Attribute> targetData = ref.watch(attributeListProvider);
-    final rowItems = ref.watch(rowGeneratorProvider);
-    bool readOnly = true;
     return Container(
       height: 600,
       decoration: BoxDecoration(
@@ -75,8 +75,12 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
               return Container(
                   height: 520,
                   width: MediaQuery.sizeOf(context).width / 2,
-                  color: Colors.cyan,
-                  child: const Center(child: Text('Empty')));
+                  color: Colors.white,
+                  child: const Center(
+                      child: Text(
+                    "Drag n' drop or double click to \n add new a Parameter.",
+                    textAlign: TextAlign.center,
+                  )));
             }
             return Padding(
               padding: const EdgeInsets.all(defaultPadding),
@@ -84,7 +88,7 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
                 height: MediaQuery.of(context).size.height / 2,
                 // width: MediaQuery.sizeOf(context).width / 4,
                 child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
                       ReorderableListView.builder(
@@ -101,105 +105,37 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
 
                           return Dismissible(
                             key: key,
-                            onDismissed: (direction) {
+                            onDismissed: (DismissDirection direction) {
                               ref
                                   .read(attributeListProvider.notifier)
-                                  .removeAttribute(item);
+                                  .removeAttribute(index);
                             },
-                            child: Container(
-                              key: key,
-                              // width: 900,
-                              height: 75,
-                              // color: Colors.blue[400],
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: defaultPadding * 2,
-                                  ),
-                                  SizedBox(
-                                    width: 70,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          attributeTypeList
-                                              .firstWhere(
-                                                  (e) => e.type == item.type)
-                                              .name,
-                                          // item.type.name,
-                                          overflow: TextOverflow.fade,
-                                          softWrap: false,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        Switch(
-                                            value: true,
-                                            onChanged: (value) => !value),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: defaultPadding,
-                                  ),
-                                  SizedBox(
-                                    width: 250,
-                                    height: 45,
-                                    child: GestureDetector(
-                                      onDoubleTap: () {
-                                        setState(() => readOnly = !readOnly);
-                                        print(readOnly);
-                                      },
-                                      child: TextField(
-                                        key: key,
-                                        readOnly: false,
-                                        onChanged: (value) => ref
-                                            .read(
-                                                attributeListProvider.notifier)
-                                            .updateAttribute(index,
-                                                name: value),
-                                        textAlignVertical:
-                                            TextAlignVertical.bottom,
-                                        decoration: InputDecoration(
-                                            hintText: item.name,
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(4))),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    key: key,
-                                    width: defaultPadding / 2,
-                                  ),
-                                  SizedBox(
-                                    width: 250,
-                                    height: 45,
-                                    child: TextField(
-                                      onChanged: (value) => ref
-                                          .read(attributeListProvider.notifier)
-                                          .updateAttribute(index, value: value),
-                                      inputFormatters: [
-                                        item.type == AttributeType.Number
-                                            ? FilteringTextInputFormatter
-                                                .digitsOnly
-                                            : FilteringTextInputFormatter
-                                                .singleLineFormatter
-                                      ],
-                                      key: key,
-                                      textAlignVertical:
-                                          TextAlignVertical.bottom,
-                                      decoration: InputDecoration(
-                                          hintText: item.toString(),
-                                          border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4))),
-                                    ),
-                                  ),
-                                ],
+                            direction: DismissDirection.startToEnd,
+                            background: Container(
+                              alignment: AlignmentDirectional.centerStart,
+                              color: Colors.red,
+                              child: const Padding(
+                                padding:
+                                    EdgeInsets.only(left: defaultPadding * 2),
+                                child: Icon(
+                                  Icons.cancel,
+                                  size: 36,
+                                ),
                               ),
-                            ).animate(key: key).fadeIn().shimmer(),
+                            ),
+                            child: Builder(builder: (context) {
+                              switch (item.type) {
+                                case AttributeType.Dropdown:
+                                  return DropdownParameterItemWidget(
+                                      key: key,
+                                      item: item as DropdownAttribute,
+                                      index: index);
+
+                                default:
+                                  return TextParameterItemWidget(
+                                      key: key, item: item, index: index);
+                              }
+                            }),
                           );
                         },
                         // separatorBuilder: (context, index) => SizedBox(
@@ -220,102 +156,6 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
           },
         ),
       ]),
-    );
-  }
-}
-
-class TableView extends StatelessWidget {
-  const TableView({
-    super.key,
-    required this.rowItems,
-  });
-
-  final List<RowItems> rowItems;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 550,
-      child: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(defaultPadding),
-            child: Table(
-              border: TableBorder.all(color: Colors.white30),
-              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              children: [
-                const TableRow(
-                    decoration: BoxDecoration(color: Colors.redAccent),
-                    children: [
-                      TableCell(
-                          verticalAlignment: TableCellVerticalAlignment.middle,
-                          child: Center(
-                            child: Text('Title 1'),
-                          )),
-                      TableCell(
-                          verticalAlignment: TableCellVerticalAlignment.middle,
-                          child: Center(
-                            child: Text('Title 2'),
-                          )),
-                      TableCell(
-                          verticalAlignment: TableCellVerticalAlignment.middle,
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text('Title 3'),
-                            ),
-                          )),
-                    ]),
-                ...rowItems.map((e) => TableRow(children: [
-                      TableCell(
-                          verticalAlignment: TableCellVerticalAlignment.middle,
-                          child: Center(
-                            child: Text(e.cell1),
-                          )),
-                      TableCell(
-                          verticalAlignment: TableCellVerticalAlignment.middle,
-                          child: Center(
-                            child: Text(e.cell2),
-                          )),
-                      TableCell(
-                          verticalAlignment: TableCellVerticalAlignment.middle,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(e.cell3),
-                            ),
-                          )),
-                    ])),
-                ...List.generate(
-                    2,
-                    (index) => const TableRow(children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Center(
-                                child: Text('Pre poped Cell 1'),
-                              )),
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Center(
-                                child: Text('Pre poped Cell 2'),
-                              )),
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text('Pre poped Cell 3'),
-                                ),
-                              )),
-                        ]))
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

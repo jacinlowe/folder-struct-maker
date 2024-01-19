@@ -11,7 +11,28 @@ enum AttributeType {
   User_Name,
   Date,
   Loop,
-  Custom_Delimiter,
+  Custom_Delimiter;
+
+  String get readableName {
+    switch (this) {
+      case AttributeType.Custom_Text:
+        return 'Custom Text';
+      case AttributeType.Number:
+        return 'Number';
+      case AttributeType.Dropdown:
+        return 'Dropdown';
+      case AttributeType.Saveable_Field:
+        return 'Saveable Field';
+      case AttributeType.User_Name:
+        return 'Username';
+      case AttributeType.Date:
+        return 'Date';
+      case AttributeType.Loop:
+        return 'Loop';
+      case AttributeType.Custom_Delimiter:
+        return 'Custom Delimiter';
+    }
+  }
 }
 
 List<({String name, AttributeType type})> attributeTypeList = AttributeType
@@ -155,6 +176,66 @@ class NumberAttribute<T extends num> extends Attribute<num> {
       value = convertedValue;
     } else {
       throw Exception('Not a number: Please enter a number');
+    }
+  }
+}
+
+class DropdownAttribute<T extends String> extends Attribute<String> {
+  List<String>? selectableItems;
+  String? selectedItem;
+  DropdownAttribute(this.selectableItems,
+      {required super.id, required super.name})
+      : super(type: AttributeType.Dropdown, defaultValue: '', value: '') {
+    this.selectableItems = [];
+    this.selectedItem = null;
+  }
+  @override
+  String toString() {
+    return value;
+  }
+
+  @override
+  void changeValue(String val) {
+    if (selectableItems!.contains(val)) {
+      selectedItem = val;
+      value = selectedItem!;
+    } else {
+      throw Exception('Not a valid selection');
+    }
+  }
+
+  void addSelectableItem(String val) {
+    if (selectableItems!.contains(val)) {
+      throw Exception('Item already exists');
+    } else {
+      selectableItems!.add(val);
+    }
+  }
+
+  void updateSelectableItem(String previousVal, String val) {
+    if (!selectableItems!.contains(previousVal)) {
+      throw Exception('Item doesnt exists');
+    } else {
+      final index = selectableItems!.indexOf(previousVal);
+      selectableItems![index] = val;
+    }
+  }
+
+  void removeSelectableItem(int? index, String? val) {
+    if (index == null && val == null) {
+      throw Exception('Please provide either an index or a value');
+    } else if (index != null) {
+      if (index > selectableItems!.length) {
+        throw Exception('Index out of bounds');
+      } else {
+        selectableItems!.removeAt(index);
+      }
+    } else if (val != null) {
+      if (selectableItems!.contains(val)) {
+        selectableItems!.remove(val);
+      } else {
+        throw Exception('Item doesnt exist');
+      }
     }
   }
 }

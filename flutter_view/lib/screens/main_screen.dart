@@ -1,8 +1,8 @@
-import 'package:Folder_Struct_Maker/constants.dart';
-import 'package:Folder_Struct_Maker/screens/CenterMenu/draggable_test.dart';
 import 'package:flutter/material.dart';
-
 import 'package:google_fonts/google_fonts.dart';
+
+import '../Features/appbar_action_items/view/appbar_menu_view.dart';
+import '../constants.dart';
 
 import 'AttributesMenu/attributes_menu.dart';
 import 'CenterMenu/center_menu.dart';
@@ -18,31 +18,15 @@ class MainScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 30,
         backgroundColor: secondaryColor2,
-        actions: <Widget>[...actionItems, Spacer()],
+        actions: <Widget>[...actionItems, const Spacer()],
       ),
       body: Row(
         children: [
           AttributesMenu(),
-          Expanded(flex: 10, child: CenterMenu()),
-          Expanded(flex: 4, child: TreeViewMenu()),
+          const Expanded(flex: 10, child: CenterMenu()),
+          TreeViewMenu(),
         ],
       ),
     );
   }
 }
-
-var appbarMenuItems = ['File', 'Edit', 'Settings', 'Help', 'About'];
-
-var actionItems = List.generate(appbarMenuItems.length, (index) {
-  final textName = appbarMenuItems[index];
-  return Material(
-    type: MaterialType.transparency,
-    child: TextButton(
-        onPressed: () {},
-        child: Text(
-          textName,
-          style: GoogleFonts.ubuntu(
-              color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
-        )),
-  );
-});
