@@ -1,6 +1,9 @@
 import 'dart:ffi';
+import 'dart:io';
 
+import 'package:Folder_Struct_Maker/utils/get_user_name.dart';
 import 'package:dart_casing/dart_casing.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 enum AttributeType {
@@ -94,6 +97,65 @@ sealed class Attribute<T> {
   }
 }
 
+///Common Date formats
+///
+///Depending on the application, custom date formats can be used, like MMM DD, YYYY (e.g., Jan 07, 2022) or YYYY/MM/DD.
+///
+enum DateFormats {
+  standard(
+    name: 'Standard',
+    format: 'yyyy-MM-dd',
+    description: 'ISO 8601 (International Standard)',
+  ),
+
+  short(
+    name: 'Short',
+    format: 'MM/dd/yyyy',
+    description: 'Short Date',
+  ),
+  long(
+    name: 'Long',
+    format: 'MMM-dd-yyyy',
+    description: 'Long Date',
+  ),
+  dateTime(
+    name: 'Date Time (RFC2822)',
+    format: 'E-d-MMM-yyyy-H:m:s',
+    description: 'RFC 2822',
+  ),
+  sortable(
+    name: 'Sortable',
+    format: 'yyyy-MM-ddTHH:mm:ss',
+    description: 'Sortable Format',
+  ),
+  unix(
+    name: 'Unix',
+    format: '',
+  ),
+  utcTimestamp(name: 'UTC Timestamp', format: 'yyyy-MM-DDTHH:mm:ss.sssZ'),
+  longYearMonthDay(name: 'Year Month Day Long', format: 'yyyy-MM-DD'),
+  shortYearMontDay(name: 'Year Month Day Short', format: 'yy-MM-DD'),
+  monthDayYearLong(name: 'Month Day Year Long', format: 'MM-DD-yyyy'),
+  monthDayYearShort(name: 'Month Day Year Short', format: 'MM-DD-yy'),
+  dayMonthYearShort(name: 'Day Month Year Short', format: 'DD-MM-yy'),
+  dayMonthYearLong(name: 'Day Month Year Long', format: 'DD-MM-yyyy'),
+  yearMonth(name: 'Year Month', format: 'yyyy-MM'),
+  dayMonthNameYear(name: 'Day Month Name Year', format: 'DD-EEE-yyyy'),
+  dayMonthAbbrYear(name: 'Day Abbreviated Month  Year', format: 'DD-E-yyyy'),
+  monthAbbrYear(name: 'Abbreviated Month  Year', format: 'Eyyyy'),
+  custom(name: 'Custom', format: '');
+
+  final String name;
+  final String? description;
+  final String format;
+  const DateFormats(
+      {required this.name, required this.format, this.description});
+
+  String get value {
+    return format;
+  }
+}
+
 class DateAttribute<T extends DateTime> extends Attribute<DateTime> {
   DateAttribute({
     required super.id,
@@ -106,25 +168,27 @@ class DateAttribute<T extends DateTime> extends Attribute<DateTime> {
   @override
   AttributeType get type => AttributeType.Date;
 
-  final String dateFormat = 'yyyy-MM-dd';
+  DateFormats dateFormatType = DateFormats.monthAbbrYear;
+
+  DateFormat get dateFormat => DateFormat(dateFormatType.value, 'en_US');
+
   @override
   String toString() {
-    return value.toString();
+    return dateFormat.format(value).toString();
   }
 
   @override
   void changeValue(String val) {
-    value = DateTime.parse(val);
+    value = dateFormat.parse(val);
   }
 
   String now() {
     final DateTime now = DateTime.now();
-    final DateFormat format = DateFormat(dateFormat);
-    return format.format(now);
+    return dateFormat.format(now);
   }
 
-  void changeDateFormat() {
-    throw UnimplementedError('Have not created the enums for this yet');
+  void changeDateFormat(DateFormats format) {
+    dateFormatType = format;
   }
 }
 
@@ -237,6 +301,30 @@ class DropdownAttribute<T extends String> extends Attribute<String> {
         throw Exception('Item doesnt exist');
       }
     }
+  }
+}
+
+class UserNameAttribute<T extends String> extends Attribute<String> {
+  UserNameAttribute({
+    required super.id,
+    required super.name,
+  }) : super(type: AttributeType.User_Name, defaultValue: '', value: '') {
+    defaultValue = Platform.isWindows
+        ? getUsernameWindows()
+        : Platform.isMacOS
+            ? getHostName()
+            : Platform.localHostname;
+    value = defaultValue;
+  }
+
+  @override
+  String toString() {
+    return value;
+  }
+
+  @override
+  void changeValue(String val) {
+    throw Exception('Not implemented yet');
   }
 }
 

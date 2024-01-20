@@ -1,3 +1,4 @@
+import 'package:auto_size_text_plus/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -12,12 +13,13 @@ import '../../constants.dart';
 class TextParameterItemWidget extends StatefulHookConsumerWidget {
   final Attribute<dynamic> item;
   final int index;
+  bool canType;
 
-  TextParameterItemWidget({
-    required super.key,
-    required this.item,
-    required this.index,
-  });
+  TextParameterItemWidget(
+      {required super.key,
+      required this.item,
+      required this.index,
+      this.canType = true});
 
   @override
   ConsumerState<TextParameterItemWidget> createState() =>
@@ -50,12 +52,17 @@ class _ParameterItemWidgetState extends ConsumerState<TextParameterItemWidget> {
             width: 70,
             child: Column(
               children: [
-                Text(
-                  attributeTypeList.firstWhere((e) => e.type == item.type).name,
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
-                  style: const TextStyle(
-                    fontSize: 14,
+                FittedBox(
+                  child: AutoSizeText(
+                    attributeTypeList
+                        .firstWhere((e) => e.type == item.type)
+                        .name,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    minFontSize: 8,
+                    style: const TextStyle(
+                      fontSize: 14,
+                    ),
                   ),
                 ),
                 switch (locked) {
@@ -114,6 +121,8 @@ class _ParameterItemWidgetState extends ConsumerState<TextParameterItemWidget> {
             width: 250,
             height: 45,
             child: TextField(
+              readOnly: !widget.canType,
+              // enabled: widget.canType,
               onChanged: (value) {
                 ref
                     .read(attributeListProvider.notifier)

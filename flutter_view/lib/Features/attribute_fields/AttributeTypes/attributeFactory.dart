@@ -16,6 +16,7 @@ Attribute attributeFactory(AttributeType attribute, String name) {
         ..addSelectableItem('val')
         ..addSelectableItem('2');
     case AttributeType.User_Name:
+      return UserNameAttribute(id: uuid, name: name);
     case AttributeType.Custom_Delimiter:
       // Return appropriate AttributeBase implementation
       //TODO Add all implementations

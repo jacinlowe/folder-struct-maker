@@ -1,4 +1,6 @@
+import 'package:Folder_Struct_Maker/screens/CenterMenu/providers/option_toggle_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -11,13 +13,22 @@ import '../../Features/attribute_fields/attribute_combiner_consumer.dart';
 import '../../services/file_chooser.dart';
 
 class CenterMenu extends HookConsumerWidget {
-  const CenterMenu({
+  CenterMenu({
     super.key,
   });
+
+  Widget toggleOption(bool toggleVal) {
+    return toggleVal
+        ? const ParameterField()
+        : Container(
+            color: Colors.blue,
+          );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool hasUpdated = false;
+    bool optionsActive = false;
     ref.listen(templateGeneratorProvider, (previous, next) {
       if (previous != next) {
         print('templates have changed: true');
@@ -165,11 +176,10 @@ class CenterMenu extends HookConsumerWidget {
             const Spacer()
           ],
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: defaultPadding * 2, vertical: defaultPadding / 2),
-          child: ParameterField(),
-        ),
+        Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: defaultPadding * 2, vertical: defaultPadding / 2),
+            child: CenterMenuWidget()),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: defaultPadding * 2),
           child: Row(
@@ -188,16 +198,17 @@ class CenterMenu extends HookConsumerWidget {
   }
 }
 
-class ToggleOptionsSwitch extends StatefulWidget {
+class ToggleOptionsSwitch extends StatefulHookConsumerWidget {
   const ToggleOptionsSwitch({
     super.key,
   });
 
   @override
-  State<ToggleOptionsSwitch> createState() => _ToggleOptionsSwitchState();
+  ConsumerState<ToggleOptionsSwitch> createState() =>
+      _ToggleOptionsSwitchState();
 }
 
-class _ToggleOptionsSwitchState extends State<ToggleOptionsSwitch> {
+class _ToggleOptionsSwitchState extends ConsumerState<ToggleOptionsSwitch> {
   bool toggle = false;
   @override
   Widget build(BuildContext context) {
@@ -205,6 +216,9 @@ class _ToggleOptionsSwitchState extends State<ToggleOptionsSwitch> {
         value: toggle,
         onChanged: (bool value) => setState(() {
               toggle = value;
+              ref.read(optionToggleProvider.notifier).toggleOption();
             }));
   }
+
+  bool getToggleValue() => toggle;
 }

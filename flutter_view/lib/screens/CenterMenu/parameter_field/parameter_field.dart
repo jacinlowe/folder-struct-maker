@@ -130,7 +130,13 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
                                       key: key,
                                       item: item as DropdownAttribute,
                                       index: index);
-
+                                case AttributeType.Date:
+                                  return TextParameterItemWidget(
+                                    key: key,
+                                    item: item,
+                                    index: index,
+                                    canType: false,
+                                  );
                                 default:
                                   return TextParameterItemWidget(
                                       key: key, item: item, index: index);

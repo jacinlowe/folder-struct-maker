@@ -23,7 +23,7 @@ class MainScreen extends StatelessWidget {
       body: Row(
         children: [
           AttributesMenu(),
-          const Expanded(flex: 10, child: CenterMenu()),
+          Expanded(flex: 10, child: CenterMenu()),
           TreeViewMenu(),
         ],
       ),

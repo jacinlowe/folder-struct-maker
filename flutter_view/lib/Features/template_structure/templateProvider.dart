@@ -10,9 +10,11 @@ part '../../generated/Features/template_structure/templateProvider.g.dart';
 class TemplateProvider extends _$TemplateProvider {
   @override
   ExplorableNode build() {
-    final rootName = ref.read(attributeCombinerProvider);
+    final rootName = ref.watch(attributeCombinerProvider);
     final updatedTree = tree;
+
     updatedTree.data!.name = rootName;
+
     return updatedTree;
   }
 
