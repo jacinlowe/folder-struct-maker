@@ -1,15 +1,17 @@
-import 'package:Folder_Struct_Maker/Features/attribute_fields/AttributeTypes/attribute_model.dart';
-import 'package:Folder_Struct_Maker/Features/attribute_fields/attributeProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../Features/attribute_fields/dropdown_attribute_parameter_widget.dart';
+import '../../../Features/attribute_fields/models/dropdown_attribute_model.dart';
 import '../../../constants.dart';
+
+import '../../../Features/attribute_fields/providers/attributeProvider.dart';
+import '../../../Features/attribute_fields/models/attribute_model.dart';
+import '../../../Features/attribute_fields/widgets/dropdown_attribute_parameter_widget.dart';
 import '../../../services/row_generator.dart';
-import '../../../Features/attribute_fields/text_attribute_parameter_widget.dart';
+import '../../../Features/attribute_fields/widgets/text_attribute_parameter_widget.dart';
 
 class ParameterField extends StatefulHookConsumerWidget {
   const ParameterField({
@@ -25,50 +27,46 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
   @override
   Widget build(BuildContext context) {
     List<Attribute> targetData = ref.watch(attributeListProvider);
-    return Container(
-      height: 600,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+    return Column(children: [
+      const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: defaultPadding / 2),
+            child: Center(
+              child: Text('Root Folder Name'),
+            ),
+          ),
+        ],
       ),
-      child: Column(children: [
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: defaultPadding / 2),
-              child: Center(
-                child: Text('Root Folder Name'),
-              ),
+      const Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: defaultPadding * 8,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: defaultPadding / 2),
+            child: Center(
+              child: Text('Parameter Name'),
             ),
-          ],
-        ),
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: defaultPadding * 8,
+          ),
+          Spacer(),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: defaultPadding / 2),
+            child: Center(
+              child: Text('Value'),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: defaultPadding / 2),
-              child: Center(
-                child: Text('Parameter Name'),
-              ),
-            ),
-            Spacer(),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: defaultPadding / 2),
-              child: Center(
-                child: Text('Value'),
-              ),
-            ),
-            SizedBox(
-              width: 270,
-            )
-          ],
-        ),
-        // TableView(rowItems: rowItems),
-        DragTarget(
+          ),
+          SizedBox(
+            width: 270,
+          )
+        ],
+      ),
+      // TableView(rowItems: rowItems),
+      Expanded(
+        flex: 5,
+        child: DragTarget(
           builder: ((BuildContext context, List<dynamic> accepted,
               List<dynamic> rejected) {
             if (targetData.isEmpty) {
@@ -161,7 +159,7 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
             return true;
           },
         ),
-      ]),
-    );
+      ),
+    ]);
   }
 }

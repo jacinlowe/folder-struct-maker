@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../Features/attribute_fields/attributeProvider.dart';
+import '../../Features/attribute_fields/providers/attributeProvider.dart';
 import '../../Features/template_structure/templateProvider.dart';
 
 class TreeViewWidget extends StatefulHookConsumerWidget {

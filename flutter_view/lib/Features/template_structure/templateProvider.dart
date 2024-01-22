@@ -2,7 +2,7 @@ import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../attribute_fields/attributeProvider.dart';
+import '../attribute_fields/providers/attributeProvider.dart';
 
 part '../../generated/Features/template_structure/templateProvider.g.dart';
 

@@ -6,7 +6,23 @@ part of '../../services/template_generator.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$templateGeneratorHash() => r'4ab6a6235b75104f753c4e23ab000bbd47f10439';
+String _$templateNotifierHasUpdatedHash() =>
+    r'2d405e046a14d1bdcb00a5b5d38f1a898b6b23ce';
+
+/// See also [templateNotifierHasUpdated].
+@ProviderFor(templateNotifierHasUpdated)
+final templateNotifierHasUpdatedProvider = AutoDisposeProvider<bool>.internal(
+  templateNotifierHasUpdated,
+  name: r'templateNotifierHasUpdatedProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$templateNotifierHasUpdatedHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef TemplateNotifierHasUpdatedRef = AutoDisposeProviderRef<bool>;
+String _$templateGeneratorHash() => r'15e449a70635345326ca7f53042cc344bed065af';
 
 /// See also [TemplateGenerator].
 @ProviderFor(TemplateGenerator)

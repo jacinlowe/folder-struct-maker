@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../constants.dart';
-import '../../Features/attribute_fields/attributeProvider.dart';
+import '../../Features/attribute_fields/providers/attributeProvider.dart';
 import '../../Features/bored_api/consumer.dart';
-import '../../Features/attribute_fields/AttributeTypes/attribute_model.dart';
+import '../../Features/attribute_fields/models/attribute_model.dart';
 
 class AttributesMenu extends StatefulHookConsumerWidget {
   AttributesMenu({super.key});

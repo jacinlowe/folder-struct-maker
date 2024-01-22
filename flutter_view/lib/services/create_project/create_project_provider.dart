@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:Folder_Struct_Maker/Features/template_structure/templateProvider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../Features/attribute_fields/attributeProvider.dart';
+import '../../Features/attribute_fields/providers/attributeProvider.dart';
 import '../file_io.dart';
 
 part '../../generated/services/create_project/create_project_provider.g.dart';

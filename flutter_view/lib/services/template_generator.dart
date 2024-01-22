@@ -11,19 +11,31 @@ class TemplateGenerator extends _$TemplateGenerator {
   }
 
   void addTemplate(String template) {
-    state = [...state, template];
+    final temporaryName = '$template ' + (state.length + 1).toString();
+
+    state = [...state, temporaryName];
     print('adding new template');
+    ref.notifyListeners();
+  }
+
+  void removeTemplate(int id) {
+    final tempState = state;
+    tempState.removeAt(id);
+    state = tempState;
     ref.notifyListeners();
   }
 }
 
-
-// final templateNotifierHasUpdated = Provider<bool>((ref) {
-//   bool result;
-//   print('Template has been added: $result');
-//   return ref.listen(templateNotifierProvider, (previous, next) {
-//     previous != next ? result = true : result = false;
-//   });
-// });
-
-
+@riverpod
+bool templateNotifierHasUpdated(TemplateNotifierHasUpdatedRef ref) {
+  bool result = false;
+  ref.listen(
+    templateGeneratorProvider,
+    (previous, next) {
+      result = previous != next ? true : false;
+      print('Template has been added: $result');
+    },
+    onError: (error, stackTrace) => Exception(error),
+  );
+  return result;
+}

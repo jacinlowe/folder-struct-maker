@@ -19,15 +19,19 @@ class OptionToggle extends _$OptionToggle {
 }
 
 class CenterMenuWidget extends HookConsumerWidget {
-  const CenterMenuWidget({super.key});
-
+  CenterMenuWidget({super.key});
+  final PageController controller = PageController(initialPage: 0);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool optionsOn = ref.watch(optionToggleProvider);
+
     return AnimatedSwitcher(
-      duration: Duration(milliseconds: 500),
-      transitionBuilder: (child, animation) =>
-          ScaleTransition(scale: animation, child: child),
+      duration: const Duration(milliseconds: 500),
+      // transitionBuilder: (child, animation) => SlideTransition(
+      //    position: Tween<Offset>(
+      //            begin: const Offset(-0.08, 0.0), end: const Offset(0.0, 0.0))
+      //        .animate(animation),
+      //    child: child),
       child: optionsOn ? ParameterField() : OptionsParamField(),
     );
   }

@@ -6,11 +6,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'parameter_field/parameter_field.dart';
 
-import '../../Features/attribute_fields/attributeProvider.dart';
+import '../../Features/attribute_fields/providers/attributeProvider.dart';
 import '../../constants.dart';
 import '../../../services/template_generator.dart';
-import '../../Features/attribute_fields/attribute_combiner_consumer.dart';
+import '../../Features/attribute_fields/widgets/folder_name_preview_widget.dart';
 import '../../services/file_chooser.dart';
+import 'widgets/template_operation_buttons_widget.dart';
+import 'widgets/template_selector_widget.dart';
 
 class CenterMenu extends HookConsumerWidget {
   CenterMenu({
@@ -28,11 +30,10 @@ class CenterMenu extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool hasUpdated = false;
-    bool optionsActive = false;
     ref.listen(templateGeneratorProvider, (previous, next) {
       if (previous != next) {
-        print('templates have changed: true');
         hasUpdated = !hasUpdated;
+        print('templates have changed: $hasUpdated');
       }
     });
 
@@ -59,17 +60,7 @@ class CenterMenu extends HookConsumerWidget {
                 style: GoogleFonts.ubuntu(fontSize: 18),
               ),
             ),
-            const DropdownMenu(
-                width: 400,
-                initialSelection: 'Default Project',
-                dropdownMenuEntries: [
-                  DropdownMenuEntry(
-                      value: 'Default Project', label: 'Default Project'),
-                  DropdownMenuEntry(
-                      value: 'Default Project2',
-                      label:
-                          'Default Project with long text to make sure we see it all'),
-                ]),
+            TemplateSelectorWidget(),
             const Spacer(),
           ],
         ),
@@ -77,46 +68,7 @@ class CenterMenu extends HookConsumerWidget {
         Row(
           children: [
             const Spacer(),
-            Column(
-              children: [
-                OutlinedButton(
-                  onPressed: () {
-                    ref
-                        .watch(templateGeneratorProvider.notifier)
-                        .addTemplate('template');
-                    print(hasUpdated);
-                  },
-                  style: ButtonStyle(
-                      padding:
-                          MaterialStateProperty.all(const EdgeInsets.all(16)),
-                      side: MaterialStateProperty.all(
-                          const BorderSide(color: secondaryColor, width: 2)),
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)))),
-                  child: const Text(
-                    'Create Template',
-                    style: TextStyle(fontSize: 12, color: secondaryColor),
-                  ),
-                ),
-                const SizedBox(
-                  height: defaultPadding / 4,
-                ),
-                OutlinedButton(
-                  onPressed: () {},
-                  style: ButtonStyle(
-                      padding:
-                          MaterialStateProperty.all(const EdgeInsets.all(16)),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                      )),
-                  child: const Text(
-                    'Modify Template',
-                    style: TextStyle(fontSize: 12, color: Colors.black87),
-                  ),
-                ),
-              ],
-            ),
+            TemplateOperationButtonsWidget(),
             const SizedBox(width: defaultPadding),
             Container(
               width: 450,
@@ -179,7 +131,13 @@ class CenterMenu extends HookConsumerWidget {
         Padding(
             padding: const EdgeInsets.symmetric(
                 horizontal: defaultPadding * 2, vertical: defaultPadding / 2),
-            child: CenterMenuWidget()),
+            child: Container(
+                height: 600,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: CenterMenuWidget())),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: defaultPadding * 2),
           child: Row(

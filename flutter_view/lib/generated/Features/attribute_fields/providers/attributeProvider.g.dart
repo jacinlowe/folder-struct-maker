@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../../../Features/attribute_fields/attributeProvider.dart';
+part of '../../../../Features/attribute_fields/providers/attributeProvider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$attributeCombinerHash() => r'5cb0d20358451719765006f1eabf198b3a6ea7f8';
+String _$attributeCombinerHash() => r'cefcd2c99b2a53c476bb52eb4ef7a549ad5f47f2';
 
 /// See also [attributeCombiner].
 @ProviderFor(attributeCombiner)
@@ -35,7 +35,7 @@ final projectTitleProvider = AutoDisposeProvider<String>.internal(
 );
 
 typedef ProjectTitleRef = AutoDisposeProviderRef<String>;
-String _$attributeListHash() => r'00fa9213c83cbfbaee0d0e24a80465aa06b0d8be';
+String _$attributeListHash() => r'c5401eb6c71784071d46c6a005999a61cac7493c';
 
 /// See also [AttributeList].
 @ProviderFor(AttributeList)
