@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+import 'Features/attribute_fields/models/attribute_model.dart';
 import 'constants.dart';
 
 import 'screens/main_screen.dart';
@@ -22,6 +24,7 @@ void main() async {
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     WindowManager.instance.setMinimumSize(const Size(1400, 1020));
   }
+  // await initializeHive();
   runApp(const ProviderScope(child: MyApp()));
   getWindowSize();
 }
@@ -49,3 +52,14 @@ void getWindowSize() {
   Size size = view.physicalSize;
   print(size);
 }
+
+// Future<void> initializeHive() async {
+//   await Hive.initFlutter();
+//   Hive.registerAdapter(DateFormatsAdapter());
+//   Hive.registerAdapter(DateAttributeAdapter());
+//   Hive.registerAdapter(NumberAttributeAdapter());
+//   Hive.registerAdapter(CustomTextAttributeAdapter());
+//   Hive.registerAdapter(DropdownAttributeAdapter());
+//   Hive.registerAdapter(UserNameAttributeAdapter());
+//   await Hive.openBox<Attribute>('attributes');
+// }
