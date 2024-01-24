@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:Folder_Struct_Maker/Features/template_structure/templateProvider.dart';
+import '../../../Features/template_structure/templateProvider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../Features/attribute_fields/providers/attributeProvider.dart';

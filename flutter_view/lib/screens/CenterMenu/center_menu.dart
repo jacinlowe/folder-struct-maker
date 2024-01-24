@@ -1,4 +1,3 @@
-import 'package:Folder_Struct_Maker/screens/CenterMenu/providers/option_toggle_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,11 +5,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'parameter_field/parameter_field.dart';
 
-import '../../Features/attribute_fields/providers/attributeProvider.dart';
 import '../../constants.dart';
+import '../../Features/attribute_fields/providers/attributeProvider.dart';
 import '../../../services/template_generator.dart';
 import '../../Features/attribute_fields/widgets/folder_name_preview_widget.dart';
 import '../../services/file_chooser.dart';
+import '../../screens/CenterMenu/providers/option_toggle_provider.dart';
+
 import 'widgets/template_operation_buttons_widget.dart';
 import 'widgets/template_selector_widget.dart';
 

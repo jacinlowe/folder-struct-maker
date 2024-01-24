@@ -1,4 +1,4 @@
-import 'package:Folder_Struct_Maker/constants.dart';
+import '../../constants.dart';
 import 'package:animated_tree_view/animated_tree_view.dart';
 
 import 'package:flutter/material.dart';

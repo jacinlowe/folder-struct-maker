@@ -1,8 +1,10 @@
-import 'package:Folder_Struct_Maker/screens/CenterMenu/options_field/options_field.dart';
-import 'package:Folder_Struct_Maker/screens/CenterMenu/parameter_field/parameter_field.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../../screens/CenterMenu/parameter_field/parameter_field.dart';
+import '../../../screens/CenterMenu/options_field/options_field.dart';
+
 part '../../../generated/screens/CenterMenu/providers/option_toggle_provider.g.dart';
 
 @riverpod

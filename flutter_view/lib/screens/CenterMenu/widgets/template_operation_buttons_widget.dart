@@ -1,5 +1,5 @@
-import 'package:Folder_Struct_Maker/constants.dart';
-import 'package:Folder_Struct_Maker/services/template_generator.dart';
+import '../../../constants.dart';
+import '../../../services/template_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

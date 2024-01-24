@@ -1,11 +1,11 @@
-import 'package:Folder_Struct_Maker/Features/attribute_fields/providers/attributeProvider.dart';
-import 'package:auto_size_text_plus/auto_size_text.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:collection/collection.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:auto_size_text_plus/auto_size_text.dart';
+import 'package:gap/gap.dart';
 import 'package:material_table_view/material_table_view.dart';
 
+import '../../../Features/attribute_fields/providers/attributeProvider.dart';
 import '../../../Features/attribute_fields/models/attribute_model.dart';
 import '../../../Features/attribute_fields/models/date_attribute_model.dart';
 import '../../../Features/attribute_fields/models/date_enums.dart';
