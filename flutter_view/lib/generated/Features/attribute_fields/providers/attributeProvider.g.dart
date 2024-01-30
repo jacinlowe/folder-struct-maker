@@ -35,7 +35,7 @@ final projectTitleProvider = AutoDisposeProvider<String>.internal(
 );
 
 typedef ProjectTitleRef = AutoDisposeProviderRef<String>;
-String _$attributeListHash() => r'c5401eb6c71784071d46c6a005999a61cac7493c';
+String _$attributeListHash() => r'3b5779d370a5d6473b03114e3e5c187852a5362f';
 
 /// See also [AttributeList].
 @ProviderFor(AttributeList)

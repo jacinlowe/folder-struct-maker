@@ -1,5 +1,10 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'attribute_model.dart';
 
+part '../../../generated/Features/attribute_fields/models/dropdown_attribute_model.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class DropdownAttribute extends Attribute<String> {
   List<String>? selectableItems;
 
@@ -13,6 +18,11 @@ class DropdownAttribute extends Attribute<String> {
     selectableItems = [];
     selectedItem = null;
   }
+
+  factory DropdownAttribute.fromJson(Map<String, dynamic> json) =>
+      _$DropdownAttributeFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => _$DropdownAttributeToJson(this);
 
   @override
   String get value => selectedItem ?? '';

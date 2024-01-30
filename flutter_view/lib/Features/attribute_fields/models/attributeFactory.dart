@@ -53,3 +53,28 @@ Attribute attributeFactory(AttributeType attribute, String name) {
           properties: AttributeProperties());
   }
 }
+
+Attribute AttributeJsonFactory(Map<String, dynamic> json) {
+  // return switch (json['type'] as String){
+  //   AttributeType.Date.readableName => DateAttribute.fromJson(json),
+  //   _ => TextAttribute.fromJson(json)
+  // }
+  if (json['type'] == AttributeType.Date.readableName) {
+    return DateAttribute.fromJson(json);
+  } else if (json['type'] == AttributeType.Number.toString()) {
+    return NumberAttribute.fromJson(json);
+  } else if (json['type'] == AttributeType.Dropdown.toString()) {
+    return DropdownAttribute.fromJson(json);
+  } else if (json['type'] == AttributeType.User_Name.toString()) {
+    return UserNameAttribute.fromJson(json);
+  } else if (json['type'] == AttributeType.Custom_Delimiter.toString()) {
+    return TextAttribute.fromJson(json);
+  } else
+  // (json['type'] == AttributeType.Custom_Text.toString())
+  {
+    return TextAttribute.fromJson(json);
+  }
+  // else{
+  //   return Attribute.fromJson(json);
+  // }
+}

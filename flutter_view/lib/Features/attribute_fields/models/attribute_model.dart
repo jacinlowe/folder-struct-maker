@@ -1,35 +1,24 @@
 import 'package:dart_casing/dart_casing.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+part '../../../generated/Features/attribute_fields/models/attribute_model.g.dart';
+
+@JsonEnum(valueField: 'name')
 enum AttributeType {
-  Custom_Text,
-  Number,
-  Dropdown,
-  Saveable_Field,
-  User_Name,
-  Date,
-  Loop,
-  Custom_Delimiter;
+  Custom_Text(name: 'Custom Text'),
+  Number(name: 'Number'),
+  Dropdown(name: 'Dropdown'),
+  Saveable_Field(name: 'Saveable Field'),
+  User_Name(name: 'Username'),
+  Date(name: 'Date'),
+  Loop(name: 'Loop'),
+  Custom_Delimiter(name: 'Custom Delimiter');
+
+  final String name;
+  const AttributeType({required this.name});
 
   String get readableName {
-    switch (this) {
-      case AttributeType.Custom_Text:
-        return 'Custom Text';
-      case AttributeType.Number:
-        return 'Number';
-      case AttributeType.Dropdown:
-        return 'Dropdown';
-      case AttributeType.Saveable_Field:
-        return 'Saveable Field';
-      case AttributeType.User_Name:
-        return 'Username';
-      case AttributeType.Date:
-        return 'Date';
-      case AttributeType.Loop:
-        return 'Loop';
-      case AttributeType.Custom_Delimiter:
-        return 'Custom Delimiter';
-    }
+    return name;
   }
 }
 
@@ -38,12 +27,25 @@ List<({String name, AttributeType type})> attributeTypeList = AttributeType
     .map((e) => (type: e, name: Casing.titleCase(e.name)))
     .toList();
 
+@JsonSerializable()
 class AttributeProperties {
-  bool saveHistory = true;
-  bool folderBreak = false;
-  bool useInPath = true;
-  bool locked = false;
-  bool required = false;
+  bool saveHistory;
+  bool folderBreak;
+  bool useInPath;
+  bool locked;
+  bool required;
+
+  AttributeProperties(
+      {this.saveHistory = true,
+      this.folderBreak = false,
+      this.useInPath = true,
+      this.locked = false,
+      this.required = false});
+
+  factory AttributeProperties.fromJson(Map<String, dynamic> json) =>
+      _$AttributePropertiesFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AttributePropertiesToJson(this);
 
   void changeSaveHistory() {
     saveHistory = !saveHistory;
@@ -99,6 +101,8 @@ abstract class Attribute<T> {
   void updateName(String newName) {
     name = newName;
   }
+
+  Map<String, dynamic> toJson();
 
   @override
   String toString();

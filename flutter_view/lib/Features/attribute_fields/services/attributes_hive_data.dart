@@ -1,62 +1,54 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:post_composer/Features/attribute_fields/models/attributeFactory.dart';
 
 import '../models/attribute_model.dart';
 
 class AttributeRepo {
-  late Box<Attribute> _hive;
-  late List<Attribute> _box;
+  // final Box<List<Map<String, dynamic>>> _hive = Hive.box('attributes');
+  final Box _box = Hive.box('attributeBox');
+  List<Attribute> repo = [];
 
   AttributeRepo();
-  List<Attribute>? getAttributes() {
-    _hive = Hive.box<Attribute>('attributes');
-    if (_hive.isOpen) {
-      _box = _hive.values.toList();
-      return _box;
-    }
-    return null;
+
+  List<Attribute> getAttributes() {
+    (() async => await _loadRepo());
+
+    return repo;
   }
 
-  List<Attribute> addAttribute(Attribute attribute) {
-    _hive.add(attribute);
-    _box = _hive.values.toList();
-    return _box;
+  void addAttribute(Attribute attribute) async {
+    repo.add(attribute);
+    await _saveRepo();
   }
 
   void removeAttribute(int index) {
-    _hive.deleteAt(index);
+    repo.removeAt(index);
+    _saveRepo();
   }
 
   void deleteAll() {
     _box.clear();
   }
 
-  void updateAttribute(int index,
-      {String? value, String? defaultValue, String? name}) {
-    final attr = _hive.getAt(index);
-    if (attr == null) throw HiveAttributeNotFoundException();
-    final tempState = _box.toList();
-
-    if (value != null) {
-      attr.updateValue(value);
-    }
-    if (defaultValue != null) {
-      attr.updateDefaultValue(defaultValue);
-    }
-    if (name != null) {
-      attr.updateName(name);
-    }
-
-    tempState.insert(index, attr);
+  Future<void> _saveRepo() async {
+    await _box.put('_attributes', repo.map((e) => e.toJson()).toList());
   }
 
-  void updateAttributes(List<Attribute> attributes) {
-    _hive.clear();
-    _hive.addAll(attributes);
-    _box = _hive.values.toList();
+  _loadRepo() async {
+    final data = await _box.get('_attributes');
+    if (data != null) {
+      repo = data.map((e) => AttributeJsonFactory(e)).toList();
+    }
   }
 }
 
 class HiveAttributeNotFoundException implements Exception {
   HiveAttributeNotFoundException();
   final String message = 'Cannot Find Attribute in box';
+}
+
+class HiveCouldNotLoadError implements Error {
+  @override
+  // TODO: implement stackTrace
+  StackTrace? get stackTrace => throw UnimplementedError();
 }

@@ -155,7 +155,9 @@ class _ParameterFieldState extends ConsumerState<ParameterField> {
           onAccept: ((AttributeType data) {
             ref.watch(attributeListProvider.notifier).addAttribute(data);
           }),
+          onMove: (details) => print('On Move: ${details.offset}'),
           onWillAcceptWithDetails: (details) {
+            print('On Will Accept: $details');
             return true;
           },
         ),

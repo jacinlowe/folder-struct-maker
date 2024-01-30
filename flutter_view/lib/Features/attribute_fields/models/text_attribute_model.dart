@@ -1,18 +1,26 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import 'attribute_model.dart';
 
+part '../../../generated/Features/attribute_fields/models/text_attribute_model.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class TextAttribute extends Attribute<String> {
-  String _internalValue;
-  String _internalDefaultValue;
+  String internalValue;
+  String internalDefaultValue;
 
   TextAttribute({
-    required String internalValue,
-    required String internalDefaultValue,
+    required String this.internalValue,
+    required String this.internalDefaultValue,
     required super.id,
     required super.name,
     required super.properties,
-  })  : _internalValue = internalValue,
-        _internalDefaultValue = internalDefaultValue,
-        super(type: AttributeType.Custom_Text);
+  }) : super(type: AttributeType.Custom_Text);
+
+  factory TextAttribute.fromJson(Map<String, dynamic> json) =>
+      _$TextAttributeFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => _$TextAttributeToJson(this);
 
   @override
   String toString() {
@@ -20,18 +28,18 @@ class TextAttribute extends Attribute<String> {
   }
 
   @override
-  String get defaultValue => _internalDefaultValue;
+  String get defaultValue => internalDefaultValue;
 
   @override
   void updateDefaultValue(String newDefaultValue) {
-    _internalDefaultValue = newDefaultValue;
+    internalDefaultValue = newDefaultValue;
   }
 
   @override
   void updateValue(String newValue) {
-    _internalValue = newValue;
+    internalValue = newValue;
   }
 
   @override
-  String get value => _internalValue;
+  String get value => internalValue;
 }

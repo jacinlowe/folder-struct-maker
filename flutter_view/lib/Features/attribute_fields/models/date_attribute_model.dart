@@ -1,29 +1,43 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
 
 import 'attribute_model.dart';
 import 'date_enums.dart';
 
+part '../../../generated/Features/attribute_fields/models/date_attribute_model.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class DateAttribute extends Attribute<DateTime> {
-  DateTime _internalValue;
-  DateTime _internalDefaultValue;
+  DateTime internalValue;
+
+  DateTime internalDefaultValue;
 
   DateAttribute({
-    required DateTime internalValue,
-    required DateTime internalDefaultValue,
-    required String super.id,
-    required String super.name,
-    required AttributeProperties super.properties,
-  })  : _internalValue = internalValue,
-        _internalDefaultValue = internalDefaultValue,
-        super(type: AttributeType.Date);
+    required this.internalValue,
+    required this.internalDefaultValue,
+    required String id,
+    required String name,
+    required AttributeProperties properties,
+  }) :
+        // internalValue = DateTime.now(),
+        //       internalDefaultValue = DateTime.now(),
+        super(
+            id: id,
+            name: name,
+            properties: properties,
+            type: AttributeType.Date);
+  @override
+  factory DateAttribute.fromJson(Map<String, dynamic> json) =>
+      _$DateAttributeFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => _$DateAttributeToJson(this);
 
   @override
-  String get defaultValue =>
-      dateFormat.format(_internalDefaultValue).toString();
+  String get defaultValue => dateFormat.format(internalDefaultValue).toString();
 
   @override
-  String get value => dateFormat.format(_internalValue).toString();
+  String get value => dateFormat.format(internalValue).toString();
 
   @override
   AttributeType get type => AttributeType.Date;
@@ -34,6 +48,10 @@ class DateAttribute extends Attribute<DateTime> {
 
   @override
   String toString() {
+    return value;
+  }
+
+  Set toMap() {
     final Set res = {
       name,
       id,
@@ -43,7 +61,7 @@ class DateAttribute extends Attribute<DateTime> {
       dateFormatType,
       properties.toMap()
     };
-    return res.toString();
+    return res;
   }
 
   String now() {
@@ -57,11 +75,21 @@ class DateAttribute extends Attribute<DateTime> {
 
   @override
   void updateDefaultValue(DateTime newDefaultValue) {
-    _internalDefaultValue = newDefaultValue;
+    internalDefaultValue = newDefaultValue;
   }
 
   @override
   void updateValue(DateTime newValue) {
-    _internalValue = newValue;
+    internalValue = newValue;
   }
+}
+
+void main() {
+  final dateish = DateAttribute(
+      internalValue: DateTime.now(),
+      internalDefaultValue: DateTime.now(),
+      id: 'id',
+      name: 'name',
+      properties: AttributeProperties());
+  print(dateish.toJson());
 }

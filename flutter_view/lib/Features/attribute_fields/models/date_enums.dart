@@ -1,10 +1,12 @@
 import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 ///Common Date formats
 ///
 ///Depending on the application, custom date formats can be used, like MMM DD, YYYY (e.g., Jan 07, 2022) or YYYY/MM/DD.
 ///
 
+@JsonEnum(valueField: 'name')
 enum DateFormats {
   standard(
     name: 'Standard',

@@ -1,31 +1,39 @@
 import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'attribute_model.dart';
 
+part '../../../generated/Features/attribute_fields/models/number_attribute_model.g.dart';
+
 const MAX_PADDING = 10;
 
+@JsonSerializable(explicitToJson: true)
 class NumberAttribute extends Attribute<num> {
-  num _internalValue;
-  num _internalDefaultValue;
+  num internalValue;
+  num internalDefaultValue;
   bool autoIncrement = false;
 
   NumberAttribute(
-      {required num internalValue,
-      required num internalDefaultValue,
+      {required this.internalValue,
+      required this.internalDefaultValue,
       required super.id,
       required super.name,
       required super.properties})
-      : _internalDefaultValue = internalDefaultValue,
-        _internalValue = internalValue,
-        super(type: AttributeType.Number);
+      : super(type: AttributeType.Number);
 
+  factory NumberAttribute.fromJson(Map<String, dynamic> json) =>
+      _$NumberAttributeFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => _$NumberAttributeToJson(this);
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
   NumberFormat padding = NumberFormat('0000');
 
   @override
-  String get value => padding.format(_internalValue).toString();
+  String get value => padding.format(internalValue).toString();
 
   @override
-  String get defaultValue => padding.format(_internalDefaultValue).toString();
+  String get defaultValue => padding.format(internalDefaultValue).toString();
 
   @override
   String toString() {
@@ -45,16 +53,16 @@ class NumberAttribute extends Attribute<num> {
   }
 
   void increment() {
-    _internalValue++;
+    internalValue++;
   }
 
   @override
   void updateDefaultValue(num newDefaultValue) {
-    _internalDefaultValue = newDefaultValue;
+    internalDefaultValue = newDefaultValue;
   }
 
   @override
   void updateValue(num newValue) {
-    _internalValue = newValue;
+    internalValue = newValue;
   }
 }

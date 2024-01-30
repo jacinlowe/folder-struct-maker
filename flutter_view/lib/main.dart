@@ -2,10 +2,17 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:post_composer/services/hive_test/test_hive_class.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'Features/attribute_fields/data/dateAttributeAdapter.dart';
+import 'Features/attribute_fields/data/dropdownAttributeAdapter.dart';
+import 'Features/attribute_fields/data/numberAttributeAdapter.dart';
+import 'Features/attribute_fields/data/textAttributeAdapter.dart';
+import 'Features/attribute_fields/data/usernameAttributeAdapter.dart';
 import 'Features/attribute_fields/models/attribute_model.dart';
+import 'Features/attribute_fields/models/date_attribute_model.dart';
 import 'constants.dart';
 
 import 'screens/main_screen.dart';
@@ -24,7 +31,7 @@ void main() async {
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     WindowManager.instance.setMinimumSize(const Size(1400, 1020));
   }
-  // await initializeHive();
+  await initializeHive();
   runApp(const ProviderScope(child: MyApp()));
   getWindowSize();
 }
@@ -53,13 +60,19 @@ void getWindowSize() {
   print(size);
 }
 
-// Future<void> initializeHive() async {
-//   await Hive.initFlutter();
-//   Hive.registerAdapter(DateFormatsAdapter());
-//   Hive.registerAdapter(DateAttributeAdapter());
-//   Hive.registerAdapter(NumberAttributeAdapter());
-//   Hive.registerAdapter(CustomTextAttributeAdapter());
-//   Hive.registerAdapter(DropdownAttributeAdapter());
-//   Hive.registerAdapter(UserNameAttributeAdapter());
-//   await Hive.openBox<Attribute>('attributes');
-// }
+Future<void> initializeHive() async {
+  await Hive.initFlutter();
+  Hive.deleteBoxFromDisk('attributeBox');
+  Hive.registerAdapter(AccountAdapter());
+
+  Hive.registerAdapter(DateAttributeAdapter());
+  Hive.registerAdapter(NumberAttributeAdapter());
+  Hive.registerAdapter(TextAttributeAdapter());
+  Hive.registerAdapter(DropdownAttributeAdapter());
+  Hive.registerAdapter(UserNameAttributeAdapter());
+
+  await Hive.openBox<List<Account>>('account');
+
+  await Hive.openBox('attributeBox');
+  //     .catchError((e) => print('Open Error $e'));
+}
