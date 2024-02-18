@@ -1,6 +1,6 @@
 name: post_composer
 description: "Post Composer is a powerful project management and automation tool designed for seamless project setup. This application excels in creating folder structures, default files, and automating project configurations. With a focus on composable nodes, Post Composer offers an intuitive and swift experience, allowing users to efficiently organize and kickstart their projects. Say goodbye to manual setups and welcome a streamlined workflow with Post Composer."
-
+title: "Post Composer"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -133,7 +133,7 @@ flutter:
 #  Building the Windows installer using the MSIX package format
 # reference: https://pub.dev/packages/msix
 msix_config:
-  display_name: Folder Struct Maker
+  display_name: ${title}
   publisher_display_name: Awesomelight.com
   publisher: ---
   identity_name: ---

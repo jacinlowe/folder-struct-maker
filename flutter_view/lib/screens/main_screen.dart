@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:post_composer/services/hive_test/hive_provider.dart';
-import 'package:post_composer/services/hive_test/test_hive_class.dart';
-
+import 'package:post_composer/screens/AttributesMenu/attributes_menu.dart';
+import 'package:post_composer/screens/CenterMenu/center_menu.dart';
+import 'package:post_composer/screens/TreeViewMenu/tree_view_menu.dart';
 import '../Features/appbar_action_items/view/appbar_menu_view.dart';
 import '../constants.dart';
-
-import 'AttributesMenu/attributes_menu.dart';
-import 'CenterMenu/center_menu.dart';
-import 'TreeViewMenu/tree_view_menu.dart';
 
 class MainScreen extends ConsumerWidget {
   const MainScreen({super.key});
@@ -24,74 +18,43 @@ class MainScreen extends ConsumerWidget {
         backgroundColor: secondaryColor2,
         actions: <Widget>[...actionItems, const Spacer()],
       ),
-      body: Row(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          AttributesMenu(),
-          // Flexible(child: HiveTestWidget()),
-          Expanded(flex: 10, child: CenterMenu()),
-          TreeViewMenu(),
+          Text('tab bar'),
+          Text('Template Selector'),
+          Text('buttons'),
+          Text('folder name'),
+          Container(
+              width: MediaQuery.sizeOf(context).width * 0.9,
+              decoration: BoxDecoration(color: Colors.grey[350]))
         ],
       ),
     );
   }
 }
 
-// class HiveTestWidget extends StatefulHookConsumerWidget {
-//   const HiveTestWidget({
-//     super.key,
-//   });
+class PageViewWidget extends StatelessWidget {
+  const PageViewWidget({super.key});
 
-//   @override
-//   ConsumerState<HiveTestWidget> createState() => _HiveTestWidgetState();
-// }
-
-// class _HiveTestWidgetState extends ConsumerState<HiveTestWidget> {
-//   @override
-//   Widget build(BuildContext context) {
-//     final accounts = ref.watch(hiveAccountProvider);
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           SizedBox(
-//             height: 400,
-//             child: ListView.builder(
-//                 itemCount: accounts.length,
-//                 itemBuilder: (
-//                   context,
-//                   index,
-//                 ) {
-//                   return accounts.isEmpty
-//                       ? const Text('No accounts')
-//                       : Padding(
-//                           padding: const EdgeInsets.all(8.0),
-//                           child: Text(
-//                             accounts[index].toString(),
-//                             style: GoogleFonts.poppins(
-//                               color: Colors.black,
-//                               fontSize: 10,
-//                               fontWeight: FontWeight.w500,
-//                             ),
-//                           ),
-//                         );
-//                 }),
-//           ),
-//           ElevatedButton(
-//               onPressed: () =>
-//                   ref.read(hiveAccountProvider.notifier).saveAccount(),
-//               child: Text(
-//                 'Save Account',
-//                 style: TextStyle(fontSize: 10),
-//               )),
-//           ElevatedButton(
-//               onPressed: () =>
-//                   ref.read(hiveAccountProvider.notifier).deleteAccount(),
-//               child: Text(
-//                 'Clear Account',
-//                 style: TextStyle(fontSize: 10),
-//               )),
-//         ],
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    final PageController controller = PageController();
+    return PageView(
+      controller: controller,
+      scrollDirection: Axis.horizontal,
+      children: [
+        const Center(
+          child: Text('Page 1'),
+        ),
+        const Center(
+          child: Text('Page 2'),
+        ),
+        const Center(
+          child: Text('Page 3'),
+        ),
+      ],
+    );
+  }
+}

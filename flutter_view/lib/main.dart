@@ -31,7 +31,7 @@ void main() async {
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     WindowManager.instance.setMinimumSize(const Size(1400, 1020));
   }
-  await initializeHive();
+  // await initializeHive();
   runApp(const ProviderScope(child: MyApp()));
   getWindowSize();
 }

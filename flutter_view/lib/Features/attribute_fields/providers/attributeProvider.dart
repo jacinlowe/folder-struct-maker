@@ -16,7 +16,7 @@ const DELIMITER = '_';
 
 @riverpod
 class AttributeList extends _$AttributeList {
-  final _hiveBox = HiveRepository(Hive.box('attributeBox'));
+  // final _hiveBox = HiveRepository(Hive.box('attributeBox'));
   // final Box<List<Attribute>> box = Hive.box('attributeBox');
 
   @override
@@ -34,12 +34,12 @@ class AttributeList extends _$AttributeList {
     final name = attribute.name;
     final newAttribute = attributeFactory(attribute, name);
 
-    _hiveBox.add(Entity<Attribute>(id: newAttribute.id, entity: newAttribute));
+    // _hiveBox.add(Entity<Attribute>(id: newAttribute.id, entity: newAttribute));
 
     state = [...state, newAttribute];
 
     print('item should be added ${newAttribute.id}');
-    _hiveBox.getById(newAttribute.id);
+    // _hiveBox.getById(newAttribute.id);
   }
 
   void removeAttribute(int index) async {
