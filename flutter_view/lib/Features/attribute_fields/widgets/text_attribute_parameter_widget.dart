@@ -42,7 +42,7 @@ class _ParameterItemWidgetState extends ConsumerState<TextParameterItemWidget> {
       height: 75,
       // color: Colors.blue[400],
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(

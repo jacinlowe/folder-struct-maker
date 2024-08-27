@@ -6,7 +6,7 @@ part of '../../../services/create_project/create_project_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$createProjectHash() => r'9306edf94ff731d52bddaaa93c6e92e6300c80ac';
+String _$createProjectHash() => r'41c3f34206bbcae50c1c9fa84cf7c552e6a8d6ab';
 
 /// See also [CreateProject].
 @ProviderFor(CreateProject)

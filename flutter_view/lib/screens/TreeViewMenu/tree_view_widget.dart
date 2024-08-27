@@ -1,3 +1,4 @@
+import '../../Features/template_structure/models/explorable_node.dart';
 import '../../constants.dart';
 import 'package:animated_tree_view/animated_tree_view.dart';
 
@@ -20,12 +21,16 @@ class _TreeViewWidgetState extends ConsumerState<TreeViewWidget> {
   Widget build(BuildContext context) {
     final rootName = ref.watch(attributeCombinerProvider);
     final tree = ref.watch(templateProviderProvider);
+    if (tree.structure == null) {
+      return Expanded(child: Container());
+    }
+
     return TreeView.simpleTyped<Explorable, TreeNode<Explorable>>(
-      tree: tree,
-      showRootNode: true,
+      tree: tree.structure!,
+      // showRootNode: true,
       expansionBehavior: ExpansionBehavior.scrollToLastChild,
       onTreeReady: (controller) =>
-          controller.expandAllChildren(tree, recursive: true),
+          controller.expandAllChildren(tree.structure!, recursive: true),
       expansionIndicatorBuilder: (context, node) {
         if (node.isRoot) {
           return PlusMinusIndicator(
@@ -43,19 +48,13 @@ class _TreeViewWidgetState extends ConsumerState<TreeViewWidget> {
       },
       indentation: const Indentation(),
       builder: (context, node) {
-        String name = node.data?.name ?? "N/A";
-
         return Padding(
           padding: const EdgeInsets.only(left: defaultPadding / 2),
           child: ListTile(
             dense: true,
             visualDensity: VisualDensity.adaptivePlatformDensity,
             title: Text(
-              name != '/root'
-                  ? name
-                  : rootName == ''
-                      ? '/root'
-                      : rootName,
+              parseName(node, tree.name, rootName),
               style: TextStyle(color: Colors.white),
             ),
             // subtitle: Text(
@@ -70,6 +69,20 @@ class _TreeViewWidgetState extends ConsumerState<TreeViewWidget> {
         );
       },
     );
+  }
+
+  String parseName(TreeNode<Explorable> node, String treeName, rootName) {
+    // node.isRoot
+    if (node.isRoot) {
+      return rootName;
+    } else {
+      String name = node.data?.name ?? "N/A";
+      return name != '/root'
+          ? name
+          : rootName == ''
+              ? '/root'
+              : rootName;
+    }
   }
 }
 

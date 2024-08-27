@@ -1,5 +1,5 @@
 import '../../../constants.dart';
-import '../../../services/template_generator.dart';
+import '../../../Features/template_structure/template_name.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -14,9 +14,7 @@ class TemplateOperationButtonsWidget extends HookConsumerWidget {
       children: [
         OutlinedButton(
           onPressed: () {
-            ref
-                .read(templateGeneratorProvider.notifier)
-                .addTemplate('template');
+            ref.read(templateNameProvider.notifier).addTemplate('template');
           },
           style: ButtonStyle(
               padding: MaterialStateProperty.all(const EdgeInsets.all(16)),

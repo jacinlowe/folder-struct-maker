@@ -3,11 +3,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../Features/template_structure/template_name.dart';
 import 'parameter_field/parameter_field.dart';
 
 import '../../constants.dart';
 import '../../Features/attribute_fields/providers/attributeProvider.dart';
-import '../../../services/template_generator.dart';
+
 import '../../Features/attribute_fields/widgets/folder_name_preview_widget.dart';
 import '../../services/file_chooser.dart';
 import '../../screens/CenterMenu/providers/option_toggle_provider.dart';
@@ -31,7 +32,7 @@ class CenterMenu extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool hasUpdated = false;
-    ref.listen(templateGeneratorProvider, (previous, next) {
+    ref.listen(templateNameProvider, (previous, next) {
       if (previous != next) {
         hasUpdated = !hasUpdated;
         print('templates have changed: $hasUpdated');

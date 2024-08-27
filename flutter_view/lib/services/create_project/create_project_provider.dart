@@ -14,7 +14,9 @@ class CreateProject extends _$CreateProject {
 
   void createProject({required Directory parentFolder}) {
     try {
-      print(ref.read(templateProviderProvider.notifier).treeAsNestedList());
+      final template = ref.read(templateProviderProvider.notifier).state;
+
+      print(template.treeAsNestedList());
     } catch (e) {
       print("Exception: $e");
       return;

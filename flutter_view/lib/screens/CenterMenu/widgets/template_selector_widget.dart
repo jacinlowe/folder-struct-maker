@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../services/template_generator.dart';
+import '../../../Features/template_structure/template_name.dart';
 
 class TemplateSelectorWidget extends StatefulHookConsumerWidget {
   const TemplateSelectorWidget({
@@ -19,17 +19,21 @@ class _TemplateSelectorWidgetState
   @override
   Widget build(BuildContext context) {
     return DropdownMenu(
-        width: 400,
-        initialSelection: 'Default Project2',
-        dropdownMenuEntries: [
-          ...ref.watch(templateGeneratorProvider).map(
-                (e) => DropdownMenuEntry(value: e, label: e),
-              ),
-          DropdownMenuEntry(value: 'Default Project', label: 'Default Project'),
-          DropdownMenuEntry(
-              value: 'Default Project2',
-              label:
-                  'Default Project with long text to make sure we see it all'),
-        ]);
+      width: 400,
+      initialSelection: ref.read(templateNameProvider).first,
+      dropdownMenuEntries: [
+        ...ref.watch(templateNameProvider).map(
+              (e) => DropdownMenuEntry(value: e, label: e),
+            ),
+      ],
+      onSelected: (name) {
+        if (name == null) {
+          throw Exception('A template name must be selected');
+        }
+        ref
+            .read(selectedTemplateNameProvider.notifier)
+            .selectTemplateName(name);
+      },
+    );
   }
 }

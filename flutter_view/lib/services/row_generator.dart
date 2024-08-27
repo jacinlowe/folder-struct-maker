@@ -1,5 +1,4 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 part '../generated/services/row_generator.g.dart';
 
 @riverpod
